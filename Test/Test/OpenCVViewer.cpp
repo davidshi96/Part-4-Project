@@ -14,62 +14,59 @@
 ///////////////////////////////////////////////////////////////////////////
 
 /**********************************************************************
- DepthViewer: Displays the depth of the point selected by the user
-			   using the disparity image computed.
+	OpenCVViewer: Defines the methods to view the stereo images from 
+				   the camera.
+	
 **********************************************************************/
 
 #include "stdafx.h"
-#include "DepthViewer.h"
+#include "OpenCVViewer.h"
+#include <ctype.h>
 
-//Local point to access the user selected value
-Point g_SelectedPoint(-1, -1);
+//Initialises all the variables and methods
+int OpenCVViewer::Init()
+{	
+	cout << endl << "		Depth Viewer Application " << endl << endl;
+	cout << " Depth Viewer - Displays the Filtered Disparity between the two frames" << endl << " Closer objects appear in Red and Farther objects appear in Blue Color!" << endl;
+	cout << " Select a point to display the depth of the point!" << endl << endl;
 
-//Initialises all the necessary files
-int DepthViewer::Init()
-{
-	cout << endl << "Depth Viewer Application" << endl  << endl;
-	//Initialise the Camera
-	if(!_Disparity.InitCamera(true, true))
+	//Init 
+	if(!_Disparity.InitCamera(true, true)) //Initialise the camera
 	{
+		//PrintDebug(DEBUG_ENABLED, L"Camera Initialisation Failed!");
 		return 0;
 	}
-	
-	//Camera Streaming
-	CameraStreaming();
+		
+	//Streams the camera and process the height
+	TaraViewer();
 
 	return 1;
 }
 
-//Streams the input from the camera
-int DepthViewer::CameraStreaming()
-{	
-	float DepthValue = 0;
+//Streams using OpenCV Application
+//Converts the 10 bit data to 8 bit data and splits the left an d right image separately
+int OpenCVViewer::TaraViewer()
+{
 	char WaitKeyStatus;
-	bool GrayScaleDisplay = false;
-	Mat LeftImage, RightImage;
+	Mat LeftImage, RightImage, FullImage;
 	Mat gDisparityMap, gDisparityMap_viz;
-	int BrightnessVal = 5;		//Default value
+	int BrightnessVal = 4;
 
 	//Window Creation
-	//namedWindow("Disparity Map", WINDOW_AUTOSIZE);
-	namedWindow("Left Image", WINDOW_AUTOSIZE);
-	//namedWindow("Right Image", WINDOW_AUTOSIZE);
-
-	//Mouse callback set to disparity window
-    //setMouseCallback("Disparity Map", DepthPointSelection);
-
+	//namedWindow("Input Image", WINDOW_NORMAL);
+	namedWindow("Disparity Map", WINDOW_AUTOSIZE);
+	
 	cout << endl << "Press q/Q/Esc on the Image Window to quit the application!" << endl;
 	cout << endl << "Press b/B on the Image Window to change the brightness of the camera" << endl;
 	cout << endl << "Press t/T on the Image Window to change to Trigger Mode" << endl;
 	cout << endl << "Press m/M on the Image Window to change to Master Mode" << endl;
 	cout << endl << "Press a/A on the Image Window to change to Auto exposure  of the camera" << endl;
-	cout << endl << "Press e/E on the Image Window to change the exposure of the camera" << endl;
-	cout << endl << "Press d/D on the Image Window to view the grayscale disparity map!" << endl << endl;
+	cout << endl << "Press e/E on the Image Window to change the exposure of the camera" << endl << endl;
 
 	cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	string Inputline;
-	
-	//Displays the filtered disparity, the depth of the point selected is displayed
+
+	//Streams the Camera using the OpenCV Video Capture Object
 	while(1)
 	{
 		if(!_Disparity.GrabFrame(&LeftImage, &RightImage)) //Reads the frame and returns the rectified image
@@ -77,37 +74,14 @@ int DepthViewer::CameraStreaming()
 			destroyAllWindows();
 			break;
 		}
-	
+			
+		//concatenate both the image as single image
+		hconcat(LeftImage, RightImage, FullImage);
+		imshow("Input Image", FullImage);
+
 		//Get disparity
 		//_Disparity.GetDisparity(LeftImage, RightImage, &gDisparityMap, &gDisparityMap_viz);
-		/*
-		//Estimate the Depth of the point selected
-		_Disparity.EstimateDepth(g_SelectedPoint, &DepthValue);
-
-		if(g_SelectedPoint.x > -1 && DepthValue > 0) //Mark the point selected by the user
-			circle(gDisparityMap_viz, g_SelectedPoint, 3, Scalar::all(0), 3, 8);
-
-		if(DepthValue > 0)
-		{
-			stringstream ss;
-			ss << DepthValue / 10 << " cm\0" ;
-			//DisplayText(gDisparityMap_viz, ss.str(), g_SelectedPoint);
-			cout << ss.str() << endl;
-		}
-		*/
-		//Display the Images
 		//imshow("Disparity Map", gDisparityMap_viz);
-		//waitKey(1);
-		imshow("Left Image",  LeftImage);
-		//waitKey(1);
-		//imshow("Right Image", RightImage);
-		//waitKey(1);
-		if(GrayScaleDisplay)
-		{			
-			imshow("Disparity Map GrayScale", gDisparityMap);						
-		}
-
-
 
 		//waits for the Key input
 		WaitKeyStatus = waitKey(1);
@@ -116,20 +90,7 @@ int DepthViewer::CameraStreaming()
 			destroyAllWindows();
 			break;
 		}		
-		else if(WaitKeyStatus == 'd' || WaitKeyStatus == 'D')
-		{	
-			if(!GrayScaleDisplay)
-			{
-				GrayScaleDisplay = true;
-				namedWindow("Disparity Map GrayScale", WINDOW_AUTOSIZE);
-			}
-			else 
-			{
-				GrayScaleDisplay = false;
-				destroyWindow("Disparity Map GrayScale");
-			}
-			
-		}
+
 		//Sets up the mode
 		else if(WaitKeyStatus == 'T' || WaitKeyStatus == 't' ) //Stream Mode 0 - Trigger Mode 1 - Master Mode
 		{			
@@ -139,7 +100,7 @@ int DepthViewer::CameraStreaming()
 			}
 			else
 			{
-				cout << endl << "Selected mode and the current mode is the same!" << endl;
+				cout << endl << "Selected mode and the current mode is the same!!" << endl;
 			}
 		}
 
@@ -152,9 +113,9 @@ int DepthViewer::CameraStreaming()
 			}
 			else
 			{
-				cout << endl << "Selected mode and the current mode is the same!" << endl;
+				cout << endl << "Selected mode and the current mode is the same!!" << endl;
 			}
-		}		
+		}
 		//Sets up Auto Exposure
 		else if(WaitKeyStatus == 'a' || WaitKeyStatus == 'A' ) //Auto Exposure
 		{
@@ -230,15 +191,31 @@ int DepthViewer::CameraStreaming()
 			}							
 		}
 	}
-	
+
 	return 1;
 }
 
-//Call back function
-void DepthPointSelection(int MouseEvent, int x, int y, int flags, void* param) 
+/*
+//Main function 
+int main()
 {
-    if(MouseEvent == CV_EVENT_LBUTTONDOWN)  //Clicked
+	PrintDebug(DEBUG_ENABLED, L"OpenCV Camera Viewer");
+	int ReturnStatus = -1;
+
+	//Object to access the application to view the stereo images  
+	OpenCVViewer _OpenCVViewer;
+
+	//Initialises to run the viewer
+	ReturnStatus = _OpenCVViewer.Init();
+	
+	PrintDebug(DEBUG_ENABLED, L"Exit: OpenCV Camera Viewer");
+	cout << endl << "Exit: OpenCV Camera  Viewer" << endl << endl;
+	
+	if(!ReturnStatus) //check for a valid return
 	{
-		g_SelectedPoint = Point(x, y);
-    }
+		cout << endl << "Press any key to exit!" << endl << endl;
+		_getch();
+	}
+	return 0;
 }
+*/
