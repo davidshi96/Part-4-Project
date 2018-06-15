@@ -56,8 +56,8 @@ int DepthViewer::CameraStreaming()
 
 	//Window Creation
 	namedWindow("Disparity Map", WINDOW_AUTOSIZE);
-	namedWindow("Left Image", WINDOW_AUTOSIZE);
-	namedWindow("Right Image", WINDOW_AUTOSIZE);
+	//namedWindow("Left Image", WINDOW_AUTOSIZE);
+	//namedWindow("Right Image", WINDOW_AUTOSIZE);
 
 	//Mouse callback set to disparity window
     setMouseCallback("Disparity Map", DepthPointSelection);
@@ -102,10 +102,10 @@ int DepthViewer::CameraStreaming()
 		//Display the Images
 		imshow("Disparity Map", gDisparityMap_viz);
 		waitKey(1);
-		imshow("Left Image",  LeftImage);
-		waitKey(1);
-		imshow("Right Image", RightImage);
-		waitKey(1);
+		//imshow("Left Image",  LeftImage);
+		//waitKey(1);
+		//imshow("Right Image", RightImage);
+		//waitKey(1);
 		if(GrayScaleDisplay)
 		{			
 			imshow("Disparity Map GrayScale", gDisparityMap);						
