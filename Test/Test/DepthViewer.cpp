@@ -1,18 +1,3 @@
-///////////////////////////////////////////////////////////////////////////
-//
-// Copyright (c) 2016, e-Con Systems.
-//
-// All rights reserved.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS.
-// IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR 
-// ANY DIRECT/INDIRECT DAMAGES HOWEVER CAUSED AND ON ANY THEORY OF 
-// LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
-///////////////////////////////////////////////////////////////////////////
-
 /**********************************************************************
  DepthViewer: Displays the depth of the point selected by the user
 			   using the disparity image computed.
@@ -20,6 +5,7 @@
 
 #include "stdafx.h"
 #include "DepthViewer.h"
+#include <thread>
 
 //Local point to access the user selected value
 Point g_SelectedPoint(-1, -1);
@@ -27,14 +13,10 @@ Point g_SelectedPoint(-1, -1);
 //Initialises all the necessary files
 int DepthViewer::Init()
 {
-	cout << endl << "		Depth Viewer Application " << endl  << endl;
-	cout << " Depth Viewer - Displays the Filtered Disparity between the two frames" << endl << " Closer objects appear in Red and Farther objects appear in Blue Color!"<< endl;
-	cout << " Select a point to display the depth of the point!" << endl  << endl;
+	cout << endl << "Depth Viewer Application" << endl  << endl;
 	//Initialise the Camera
 	if(!_Disparity.InitCamera(true, true))
 	{
-		
-		//PrintDebug(DEBUG_ENABLED, L"Initialisation Failed");
 		return 0;
 	}
 	
@@ -52,15 +34,15 @@ int DepthViewer::CameraStreaming()
 	bool GrayScaleDisplay = false;
 	Mat LeftImage, RightImage;
 	Mat gDisparityMap, gDisparityMap_viz;
-	int BrightnessVal = 4;		//Default value
+	int BrightnessVal = 5;		//Default value
 
 	//Window Creation
-	namedWindow("Disparity Map", WINDOW_AUTOSIZE);
+	//namedWindow("Disparity Map", WINDOW_AUTOSIZE);
 	namedWindow("Left Image", WINDOW_AUTOSIZE);
-	namedWindow("Right Image", WINDOW_AUTOSIZE);
+	//namedWindow("Right Image", WINDOW_AUTOSIZE);
 
 	//Mouse callback set to disparity window
-    setMouseCallback("Disparity Map", DepthPointSelection);
+    //setMouseCallback("Disparity Map", DepthPointSelection);
 
 	cout << endl << "Press q/Q/Esc on the Image Window to quit the application!" << endl;
 	cout << endl << "Press b/B on the Image Window to change the brightness of the camera" << endl;
@@ -72,8 +54,8 @@ int DepthViewer::CameraStreaming()
 
 	cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	string Inputline;
-
-	//Dispalys the filtered disparity, the depth of the point selected is displayed
+	
+	//Displays the filtered disparity, the depth of the point selected is displayed
 	while(1)
 	{
 		if(!_Disparity.GrabFrame(&LeftImage, &RightImage)) //Reads the frame and returns the rectified image
@@ -83,8 +65,8 @@ int DepthViewer::CameraStreaming()
 		}
 	
 		//Get disparity
-		_Disparity.GetDisparity(LeftImage, RightImage, &gDisparityMap, &gDisparityMap_viz);
-
+		//_Disparity.GetDisparity(LeftImage, RightImage, &gDisparityMap, &gDisparityMap_viz);
+		/*
 		//Estimate the Depth of the point selected
 		_Disparity.EstimateDepth(g_SelectedPoint, &DepthValue);
 
@@ -98,18 +80,21 @@ int DepthViewer::CameraStreaming()
 			//DisplayText(gDisparityMap_viz, ss.str(), g_SelectedPoint);
 			cout << ss.str() << endl;
 		}
-
+		*/
 		//Display the Images
-		imshow("Disparity Map", gDisparityMap_viz);
-		waitKey(1);
+		//imshow("Disparity Map", gDisparityMap_viz);
+		//waitKey(1);
 		imshow("Left Image",  LeftImage);
-		waitKey(1);
-		imshow("Right Image", RightImage);
-		waitKey(1);
+		//waitKey(1);
+		//imshow("Right Image", RightImage);
+		//waitKey(1);
+
 		if(GrayScaleDisplay)
 		{			
 			imshow("Disparity Map GrayScale", gDisparityMap);						
 		}
+
+
 
 		//waits for the Key input
 		WaitKeyStatus = waitKey(1);
