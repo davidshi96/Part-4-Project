@@ -24,15 +24,13 @@ class DepthViewer
 {
 public:
 
-	//Initialise
-	int Init();
+	void CameraStreaming();
+	void DisparityCalculations();
+	void init();
 
 private:
 
 	int ManualExposure;
-
-	//Camera Streaming
-	int CameraStreaming();
 
 	//Object to access Disparity
 	Disparity _Disparity;	
