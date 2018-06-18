@@ -43,6 +43,7 @@ private:
 	cv::Ptr<cv::StereoMatcher> sgbm_right;
 	cv::Ptr<cv::ximgproc::DisparityWLSFilter> wls_filter;
 
+	Mat LeftImage, RightImage;
 	cv::Mat left_disp, right_disp;
 	cv::Mat LeftScaleImage, RightScaleImage;
 	cv::Mat filtered_disp, raw_disp_vis, filtered_disp_vis;

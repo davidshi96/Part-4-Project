@@ -9,7 +9,7 @@
 
 //Local point to access the user selected value
 Point g_SelectedPoint(-1, -1);
-Mat LeftImage, RightImage;
+
 
 void DepthViewer::init()
 {
@@ -45,9 +45,9 @@ void DepthViewer::DisparityCalculations() {
 		auto started = std::chrono::high_resolution_clock::now();
 
 		//Get disparity
-		//_Disparity.GetDisparity(LeftImage, RightImage, &gDisparityMap, &gDisparityMap_viz);
+		_Disparity.GetDisparity(LeftImage, RightImage, &gDisparityMap, &gDisparityMap_viz);
 		
-		
+		/*
 		//resizing image
 		resize(LeftImage, LeftScaleImage, cv::Size(), 0.5, 0.5, INTER_LINEAR_EXACT);
 		resize(RightImage, RightScaleImage, cv::Size(), 0.5, 0.5, INTER_LINEAR_EXACT);
@@ -62,7 +62,7 @@ void DepthViewer::DisparityCalculations() {
 		wls_filter->filter(left_disp, LeftImage, filtered_disp, right_disp);
 
 		getDisparityVis(filtered_disp, filtered_disp_vis, 5.0);
-		
+		*/
 		/*
 
 		//Estimate the Depth of the point selected
