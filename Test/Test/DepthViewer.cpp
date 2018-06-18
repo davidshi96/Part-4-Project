@@ -28,44 +28,36 @@ void DepthViewer::init()
 	_Disparity.SetStreamMode(MASTERMODE);
 	_Disparity.SetAutoExposure();
 	_Disparity.SetBrightness(5);
-
-
-
 }
 
 
 
+<<<<<<< HEAD
 void DepthViewer::DisparityCalculations()
 {
+=======
+void DepthViewer::DisparityCalculations() {
+
+>>>>>>> parent of f55b809... circle detection
 	float DepthValue = 0;
 	Mat gDisparityMap, gDisparityMap_viz;
 
-	/*
-	//setup for my own disparity filter
-	cv::Ptr<cv::StereoBM> bm_left;
-	cv::Ptr<cv::StereoMatcher> bm_right;
-	cv::Ptr<cv::ximgproc::DisparityWLSFilter> wls_filter;
-
-	cv::Mat left_disp, right_disp;
-	cv::Mat LeftScaleImage, RightScaleImage;
-	cv::Mat filtered_disp, raw_disp_vis, filtered_disp_vis;
-
-	bm_left = StereoBM::create(16, 15);
-	wls_filter = createDisparityWLSFilter(bm_left);
-	bm_right = StereoBM::create(16, 15);
-	*/
-
 	while (1)
 	{
-		//auto started = std::chrono::high_resolution_clock::now();
+		auto started = std::chrono::high_resolution_clock::now();
 
 		//Get disparity
 		_Disparity.GetDisparity(LeftImage, RightImage, &gDisparityMap, &gDisparityMap_viz);
 
 		/*
 		//resizing image
+<<<<<<< HEAD
 		resize(LeftImage, LeftScaleImage, cv::Size(), 0.5, 0.5, INTER_AREA);
 		resize(RightImage, RightScaleImage, cv::Size(), 0.5, 0.5, INTER_AREA);
+=======
+		resize(LeftImage, LeftScaleImage, cv::Size(), 0.5, 0.5, INTER_LINEAR_EXACT);
+		resize(RightImage, RightScaleImage, cv::Size(), 0.5, 0.5, INTER_LINEAR_EXACT);
+>>>>>>> parent of f55b809... circle detection
 
 		//performing matching
 		bm_left->compute(LeftScaleImage, RightScaleImage, left_disp);
@@ -79,6 +71,7 @@ void DepthViewer::DisparityCalculations()
 		getDisparityVis(filtered_disp, filtered_disp_vis, 5.0);
 		*/
 		/*
+
 		//Estimate the Depth of the point selected
 		_Disparity.EstimateDepth(g_SelectedPoint, &DepthValue);
 
@@ -93,16 +86,20 @@ void DepthViewer::DisparityCalculations()
 		cout << ss.str() << endl;
 		}
 		*/
+<<<<<<< HEAD
 
+=======
+>>>>>>> parent of f55b809... circle detection
 		//Display the Images
 		imshow("Disparity Map", gDisparityMap_viz);
 		waitKey(1);
-		//auto done = std::chrono::high_resolution_clock::now();
-		//std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(done - started).count() << std::endl;
+		auto done = std::chrono::high_resolution_clock::now();
+		std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(done - started).count() << std::endl;
 	}
 
 }
 
+<<<<<<< HEAD
 void DepthViewer::CircleDetection()
 {
 
@@ -124,6 +121,8 @@ void DepthViewer::CircleDetection()
 	}
 
 }
+=======
+>>>>>>> parent of f55b809... circle detection
 
 
 //Streams the input from the camera
@@ -132,7 +131,6 @@ void DepthViewer::CameraStreaming()
 
 	while (1)
 	{
-		//auto started = std::chrono::high_resolution_clock::now();
 		if (!_Disparity.GrabFrame(&LeftImage, &RightImage)) //Reads the frame and returns the rectified image
 		{
 			destroyAllWindows();
@@ -140,11 +138,9 @@ void DepthViewer::CameraStreaming()
 		}
 
 		//Display the Images
-		//imshow("Left Image", LeftImage);
+		imshow("Left Image", LeftImage);
 		imshow("Right Image", RightImage);
 		waitKey(1);
-		//auto done = std::chrono::high_resolution_clock::now();
-		//std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(done - started).count() << std::endl;
 	}
 }
 

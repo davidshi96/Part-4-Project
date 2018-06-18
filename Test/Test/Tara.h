@@ -55,7 +55,7 @@ using namespace cv::ximgproc;
 #define TRIGGERMODE 0
 #define DEBUG_ENABLED 0
 #define MAX_CAMERA 10
-#define DEFAULTBRIGHTNESS 5
+#define DEFAULTBRIGHTNESS 4 
 #define AUTOEXPOSURE 1 
 #define DISPARITY_OPTION 1 // 1 - Best Quality Depth Map and Lower Frame Rate - Stereo_SGBM 3 Way generic Left and Right 
 						   // 0 - Low  Quality Depth Map and High  Frame Rate - Stereo_BM generic Left and Right 

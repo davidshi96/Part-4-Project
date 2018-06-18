@@ -26,7 +26,6 @@ class DepthViewer
 public:
 
 	void CameraStreaming();
-	void CircleDetection();
 	void DisparityCalculations();
 	void init();
 
@@ -37,9 +36,17 @@ private:
 	//Object to access Disparity
 	Disparity _Disparity;	
 
+	cv::Ptr<cv::StereoBM> bm_left;
+	cv::Ptr<cv::StereoMatcher> bm_right;
+
+	cv::Ptr<cv::StereoSGBM> sgbm_left;
+	cv::Ptr<cv::StereoMatcher> sgbm_right;
+	cv::Ptr<cv::ximgproc::DisparityWLSFilter> wls_filter;
+
 	cv::Mat LeftImage, RightImage;
-
-
+	cv::Mat left_disp, right_disp;
+	cv::Mat LeftScaleImage, RightScaleImage;
+	cv::Mat filtered_disp, raw_disp_vis, filtered_disp_vis;
 };
 
 //Call back function
