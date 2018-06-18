@@ -32,13 +32,8 @@ void DepthViewer::init()
 
 
 
-<<<<<<< HEAD
-void DepthViewer::DisparityCalculations()
-{
-=======
 void DepthViewer::DisparityCalculations() {
 
->>>>>>> parent of f55b809... circle detection
 	float DepthValue = 0;
 	Mat gDisparityMap, gDisparityMap_viz;
 
@@ -51,13 +46,9 @@ void DepthViewer::DisparityCalculations() {
 
 		/*
 		//resizing image
-<<<<<<< HEAD
 		resize(LeftImage, LeftScaleImage, cv::Size(), 0.5, 0.5, INTER_AREA);
 		resize(RightImage, RightScaleImage, cv::Size(), 0.5, 0.5, INTER_AREA);
-=======
-		resize(LeftImage, LeftScaleImage, cv::Size(), 0.5, 0.5, INTER_LINEAR_EXACT);
-		resize(RightImage, RightScaleImage, cv::Size(), 0.5, 0.5, INTER_LINEAR_EXACT);
->>>>>>> parent of f55b809... circle detection
+
 
 		//performing matching
 		bm_left->compute(LeftScaleImage, RightScaleImage, left_disp);
@@ -86,10 +77,6 @@ void DepthViewer::DisparityCalculations() {
 		cout << ss.str() << endl;
 		}
 		*/
-<<<<<<< HEAD
-
-=======
->>>>>>> parent of f55b809... circle detection
 		//Display the Images
 		imshow("Disparity Map", gDisparityMap_viz);
 		waitKey(1);
@@ -99,7 +86,6 @@ void DepthViewer::DisparityCalculations() {
 
 }
 
-<<<<<<< HEAD
 void DepthViewer::CircleDetection()
 {
 
@@ -121,8 +107,6 @@ void DepthViewer::CircleDetection()
 	}
 
 }
-=======
->>>>>>> parent of f55b809... circle detection
 
 
 //Streams the input from the camera
