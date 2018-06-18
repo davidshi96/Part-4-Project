@@ -160,7 +160,6 @@ private:
 	cv::Ptr<cv::StereoSGBM> sgbm_left;
 	cv::Ptr<cv::StereoMatcher> sgbm_right;
 	cv::Ptr<cv::ximgproc::DisparityWLSFilter> wls_filter;
-<<<<<<< HEAD
 
 	//variables needed for fast disparity calculations
 
@@ -168,9 +167,6 @@ private:
 	//cv::Mat LeftScaleImage, RightScaleImage;
 	//cv::Mat filtered_disp;
 
-=======
-	
->>>>>>> parent of 7275074... savepoint 1 for speeding up disparity calculations
 	//BM method Parameters for computing Disparity Map
 	int bm_preFilterSize;
 	int bm_preFilterCap;
