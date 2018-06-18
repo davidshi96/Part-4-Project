@@ -27,16 +27,17 @@ c:\part-4-project\test\test\tara.h(122): warning C4251: 'Tara::Disparity::gDispa
   c:\opencv\opencv\build\include\opencv2\core\mat.hpp(772): note: see declaration of 'cv::Mat'
 c:\part-4-project\test\test\tara.h(123): warning C4251: 'Tara::Disparity::DepthMap': class 'cv::Mat' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
   c:\opencv\opencv\build\include\opencv2\core\mat.hpp(772): note: see declaration of 'cv::Mat'
-c:\part-4-project\test\test\tara.h(158): warning C4251: 'Tara::Disparity::bm_left': struct 'cv::Ptr<cv::StereoBM>' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
+c:\part-4-project\test\test\tara.h(157): warning C4251: 'Tara::Disparity::bm_left': struct 'cv::Ptr<cv::StereoBM>' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
   c:\opencv\opencv\build\include\opencv2\calib3d.hpp(2082): note: see declaration of 'cv::Ptr<cv::StereoBM>'
-c:\part-4-project\test\test\tara.h(159): warning C4251: 'Tara::Disparity::bm_right': struct 'cv::Ptr<cv::StereoMatcher>' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
+c:\part-4-project\test\test\tara.h(158): warning C4251: 'Tara::Disparity::bm_right': struct 'cv::Ptr<cv::StereoMatcher>' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
   c:\part-4-project\test\test\ximgproc\disparity_filter.hpp(131): note: see declaration of 'cv::Ptr<cv::StereoMatcher>'
-c:\part-4-project\test\test\tara.h(161): warning C4251: 'Tara::Disparity::sgbm_left': struct 'cv::Ptr<cv::StereoSGBM>' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
+c:\part-4-project\test\test\tara.h(160): warning C4251: 'Tara::Disparity::sgbm_left': struct 'cv::Ptr<cv::StereoSGBM>' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
   c:\opencv\opencv\build\include\opencv2\calib3d.hpp(2166): note: see declaration of 'cv::Ptr<cv::StereoSGBM>'
-c:\part-4-project\test\test\tara.h(162): warning C4251: 'Tara::Disparity::sgbm_right': struct 'cv::Ptr<cv::StereoMatcher>' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
+c:\part-4-project\test\test\tara.h(161): warning C4251: 'Tara::Disparity::sgbm_right': struct 'cv::Ptr<cv::StereoMatcher>' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
   c:\part-4-project\test\test\ximgproc\disparity_filter.hpp(131): note: see declaration of 'cv::Ptr<cv::StereoMatcher>'
-c:\part-4-project\test\test\tara.h(163): warning C4251: 'Tara::Disparity::wls_filter': struct 'cv::Ptr<cv::ximgproc::DisparityWLSFilter>' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
+c:\part-4-project\test\test\tara.h(162): warning C4251: 'Tara::Disparity::wls_filter': struct 'cv::Ptr<cv::ximgproc::DisparityWLSFilter>' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
   c:\part-4-project\test\test\ximgproc\disparity_filter.hpp(131): note: see declaration of 'cv::Ptr<cv::ximgproc::DisparityWLSFilter>'
+<<<<<<< HEAD
 c:\part-4-project\test\test\tara.h(205): warning C4251: 'Tara::Disparity::ImageSize': class 'cv::Size_<int>' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
   c:\opencv\opencv\build\include\opencv2\core\types.hpp(339): note: see declaration of 'cv::Size_<int>'
 c:\part-4-project\test\test\tara.h(211): warning C4251: 'Tara::Disparity::mRange': class 'cv::Mat' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
@@ -125,6 +126,13 @@ c:\part-4-project\test\test\tara.h(205): warning C4251: 'Tara::Disparity::ImageS
 c:\part-4-project\test\test\tara.h(211): warning C4251: 'Tara::Disparity::mRange': class 'cv::Mat' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
   c:\opencv\opencv\build\include\opencv2\core\mat.hpp(772): note: see declaration of 'cv::Mat'
 c:\part-4-project\test\test\tara.h(212): warning C4251: 'Tara::Disparity::StereoFrames': class 'std::vector<cv::Mat,std::allocator<_Ty>>' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
+=======
+c:\part-4-project\test\test\tara.h(198): warning C4251: 'Tara::Disparity::ImageSize': class 'cv::Size_<int>' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
+  c:\opencv\opencv\build\include\opencv2\core\types.hpp(339): note: see declaration of 'cv::Size_<int>'
+c:\part-4-project\test\test\tara.h(204): warning C4251: 'Tara::Disparity::mRange': class 'cv::Mat' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
+  c:\opencv\opencv\build\include\opencv2\core\mat.hpp(772): note: see declaration of 'cv::Mat'
+c:\part-4-project\test\test\tara.h(205): warning C4251: 'Tara::Disparity::StereoFrames': class 'std::vector<cv::Mat,std::allocator<_Ty>>' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
+>>>>>>> parent of 7275074... savepoint 1 for speeding up disparity calculations
           with
           [
               _Ty=cv::Mat
@@ -134,6 +142,7 @@ c:\part-4-project\test\test\tara.h(212): warning C4251: 'Tara::Disparity::Stereo
           [
               _Ty=cv::Mat
           ]
+<<<<<<< HEAD
 c:\part-4-project\test\test\tara.h(213): warning C4251: 'Tara::Disparity::InputFrame10bit': class 'cv::Mat' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
   c:\opencv\opencv\build\include\opencv2\core\mat.hpp(772): note: see declaration of 'cv::Mat'
 c:\part-4-project\test\test\tara.h(213): warning C4251: 'Tara::Disparity::InputFrame8bit': class 'cv::Mat' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
@@ -143,24 +152,46 @@ c:\part-4-project\test\test\tara.h(213): warning C4251: 'Tara::Disparity::Interl
 c:\part-4-project\test\test\tara.h(219): warning C4251: 'Tara::Disparity::_CameraDevice': class 'cv::VideoCapture' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
   c:\opencv\opencv\build\include\opencv2\videoio.hpp(607): note: see declaration of 'cv::VideoCapture'
 c:\part-4-project\test\test\tara.h(236): warning C4251: 'Tara::CameraEnumeration::DeviceInstances': class 'std::vector<std::string,std::allocator<_Ty>>' needs to have dll-interface to be used by clients of class 'Tara::CameraEnumeration'
+=======
+c:\part-4-project\test\test\tara.h(206): warning C4251: 'Tara::Disparity::InputFrame10bit': class 'cv::Mat' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
+  c:\opencv\opencv\build\include\opencv2\core\mat.hpp(772): note: see declaration of 'cv::Mat'
+c:\part-4-project\test\test\tara.h(206): warning C4251: 'Tara::Disparity::InputFrame8bit': class 'cv::Mat' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
+  c:\opencv\opencv\build\include\opencv2\core\mat.hpp(772): note: see declaration of 'cv::Mat'
+c:\part-4-project\test\test\tara.h(206): warning C4251: 'Tara::Disparity::InterleavedFrame': class 'cv::Mat' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
+  c:\opencv\opencv\build\include\opencv2\core\mat.hpp(772): note: see declaration of 'cv::Mat'
+c:\part-4-project\test\test\tara.h(212): warning C4251: 'Tara::Disparity::_CameraDevice': class 'cv::VideoCapture' needs to have dll-interface to be used by clients of class 'Tara::Disparity'
+  c:\opencv\opencv\build\include\opencv2\videoio.hpp(607): note: see declaration of 'cv::VideoCapture'
+c:\part-4-project\test\test\tara.h(229): warning C4251: 'Tara::CameraEnumeration::DeviceInstances': class 'std::vector<std::string,std::allocator<_Ty>>' needs to have dll-interface to be used by clients of class 'Tara::CameraEnumeration'
+>>>>>>> parent of 7275074... savepoint 1 for speeding up disparity calculations
           with
           [
               _Ty=std::string
           ]
+<<<<<<< HEAD
   c:\part-4-project\test\test\tara.h(236): note: see declaration of 'std::vector<std::string,std::allocator<_Ty>>'
+=======
+  c:\part-4-project\test\test\tara.h(229): note: see declaration of 'std::vector<std::string,std::allocator<_Ty>>'
+>>>>>>> parent of 7275074... savepoint 1 for speeding up disparity calculations
           with
           [
               _Ty=std::string
           ]
+<<<<<<< HEAD
 c:\part-4-project\test\test\tara.h(239): warning C4251: 'Tara::CameraEnumeration::CameraResolutions': class 'std::vector<std::vector<cv::Size,std::allocator<_Ty>>,std::allocator<std::vector<_Ty,std::allocator<_Ty>>>>' needs to have dll-interface to be used by clients of class 'Tara::CameraEnumeration'
+=======
+c:\part-4-project\test\test\tara.h(232): warning C4251: 'Tara::CameraEnumeration::CameraResolutions': class 'std::vector<std::vector<cv::Size,std::allocator<_Ty>>,std::allocator<std::vector<_Ty,std::allocator<_Ty>>>>' needs to have dll-interface to be used by clients of class 'Tara::CameraEnumeration'
+>>>>>>> parent of 7275074... savepoint 1 for speeding up disparity calculations
           with
           [
               _Ty=cv::Size
           ]
+<<<<<<< HEAD
   c:\part-4-project\test\test\tara.h(239): note: see declaration of 'std::vector<std::vector<cv::Size,std::allocator<_Ty>>,std::allocator<std::vector<_Ty,std::allocator<_Ty>>>>'
+=======
+  c:\part-4-project\test\test\tara.h(232): note: see declaration of 'std::vector<std::vector<cv::Size,std::allocator<_Ty>>,std::allocator<std::vector<_Ty,std::allocator<_Ty>>>>'
+>>>>>>> parent of 7275074... savepoint 1 for speeding up disparity calculations
           with
           [
               _Ty=cv::Size
           ]
-  Generating Code...
   Test.vcxproj -> C:\Part-4-Project\Test\x64\Debug\Test.exe

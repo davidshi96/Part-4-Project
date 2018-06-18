@@ -5,18 +5,18 @@
 // All rights reserved.
 //
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS.
-// IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-// ANY DIRECT/INDIRECT DAMAGES HOWEVER CAUSED AND ON ANY THEORY OF
+// IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR 
+// ANY DIRECT/INDIRECT DAMAGES HOWEVER CAUSED AND ON ANY THEORY OF 
 // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 ///////////////////////////////////////////////////////////////////////////
 
-// The following ifdef block is the standard way of creating macros which make exporting
+// The following ifdef block is the standard way of creating macros which make exporting 
 // from a DLL simpler. All files within this DLL are compiled with the TARA_EXPORTS
 // symbol defined on the command line. This symbol should not be defined on any project
-// that uses this DLL. This way any other project whose source files include this file see
+// that uses this DLL. This way any other project whose source files include this file see 
 // ETARA_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
 
@@ -55,10 +55,10 @@ using namespace cv::ximgproc;
 #define TRIGGERMODE 0
 #define DEBUG_ENABLED 0
 #define MAX_CAMERA 10
-#define DEFAULTBRIGHTNESS 4
-#define AUTOEXPOSURE 1
-#define DISPARITY_OPTION 0 // 1 - Best Quality Depth Map and Lower Frame Rate - Stereo_SGBM 3 Way generic Left and Right
-						   // 0 - Low  Quality Depth Map and High  Frame Rate - Stereo_BM generic Left and Right
+#define DEFAULTBRIGHTNESS 4 
+#define AUTOEXPOSURE 1 
+#define DISPARITY_OPTION 1 // 1 - Best Quality Depth Map and Lower Frame Rate - Stereo_SGBM 3 Way generic Left and Right 
+						   // 0 - Low  Quality Depth Map and High  Frame Rate - Stereo_BM generic Left and Right 
 
 namespace Tara
 {
@@ -77,13 +77,13 @@ public:
 
 	//Constructor
 	TaraCamParameters(void);
-
+	
 	//Destructor
 	~TaraCamParameters(void);
-
+	
 	//Initialises and reads the camera Matrix
 	BOOL Init();
-
+	
 	//Rectifying the images
 	BOOL RemapStereoImage(cv::Mat *mCamFrame_Right, cv::Mat *mCamFrame_Left);
 
@@ -95,8 +95,8 @@ private:
 	//Variables to incorporate the intrinsic and extrinsic files
 	cv::Mat M1, D1, M2, D2;
 	cv::Mat R, T;
-	cv::Mat map11, map12, map21, map22;
-
+	cv::Mat map11, map12, map21, map22;	
+	
 	//Loading the camera param
 	BOOL LoadCameraMatrix();
 
@@ -117,7 +117,7 @@ public:
 
 	//Destructor
 	~Disparity();
-
+		
 	//Local values to be passed to the functions
 	cv::Mat gDisparityMap, gDisparityMap_viz;
 	cv::Mat DepthMap;
@@ -130,7 +130,6 @@ public:
 
 	//Estimates the disparity of the camera
 	BOOL GetDisparity(cv::Mat LImage, cv::Mat RImage, cv::Mat *mDisparityMap, cv::Mat *disp_filtered);
-	BOOL FastDisparity(cv::Mat LeftImage, cv::Mat RightImage, cv::Mat *FilteredDisparity);
 
 	//Estimates the Depth of the point passed.
 	BOOL EstimateDepth(cv::Point Pt, float *DepthValue);
@@ -146,7 +145,7 @@ public:
 
 	//Sets the Brightness Val of the camera
 	BOOL SetBrightness(int BrightnessVal);
-
+	
 	//Sets the Stream Mode of the  camera
 	BOOL SetStreamMode(UINT StreamMode);
 
@@ -161,6 +160,7 @@ private:
 	cv::Ptr<cv::StereoSGBM> sgbm_left;
 	cv::Ptr<cv::StereoMatcher> sgbm_right;
 	cv::Ptr<cv::ximgproc::DisparityWLSFilter> wls_filter;
+<<<<<<< HEAD
 
 	//variables needed for fast disparity calculations
 
@@ -168,6 +168,9 @@ private:
 	//cv::Mat LeftScaleImage, RightScaleImage;
 	//cv::Mat filtered_disp;
 
+=======
+	
+>>>>>>> parent of 7275074... savepoint 1 for speeding up disparity calculations
 	//BM method Parameters for computing Disparity Map
 	int bm_preFilterSize;
 	int bm_preFilterCap;
@@ -202,7 +205,7 @@ private:
 	int e_DisparityOption; //{ 0 - Stereo_BM, 1 - Stereo_SGBM }
 
 	//Image Resolution
-	cv::Size ImageSize;
+	cv::Size ImageSize;	
 
 	//Option to generate Filtered Disparity or Without filter - USER CHOICE
 	bool gFilteredDisparity;
@@ -214,7 +217,7 @@ private:
 
 	//DeviceID to stream the camera
 	int DeviceID;
-
+	
 	//Object to hold Camera device
 	cv::VideoCapture _CameraDevice;
 
@@ -225,7 +228,7 @@ private:
 	BOOL Init(bool GenerateDisparity);
 
 	//Object to access the Q matrix connected
-	TaraCamParameters _TaraCamParameters;
+	TaraCamParameters _TaraCamParameters; 
 };
 
 class TARA_API CameraEnumeration
@@ -243,7 +246,7 @@ private:
 
 	//function for finding number of devices connected,friendly name
 	BOOL GetListofDeviceseCon();
-
+	
 	//Reads the device ID from the camera
 	BOOL GetDeviceIDeCon(int *DeviceID, cv::Size *ResolutionSelected);
 
@@ -253,12 +256,12 @@ public:
 
 	//Constructor
 	CameraEnumeration(int *DeviceID, cv::Size *ResolutionSelected);
-
+	
 	//Destructor
 	~CameraEnumeration();
 
 	//Check for stereo camera
-	BOOL IsStereoDeviceAvail(TCHAR *Devicepath);
+	BOOL IsStereoDeviceAvail(TCHAR *Devicepath);	
 };
 }
 #endif // _TARA_H
