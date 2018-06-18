@@ -35,7 +35,7 @@ void DepthViewer::init()
 
 
 
-void DepthViewer::DisparityCalculations() 
+void DepthViewer::DisparityCalculations()
 {
 	float DepthValue = 0;
 	Mat gDisparityMap, gDisparityMap_viz;
@@ -61,16 +61,16 @@ void DepthViewer::DisparityCalculations()
 
 		//Get disparity
 		_Disparity.GetDisparity(LeftImage, RightImage, &gDisparityMap, &gDisparityMap_viz);
-		
+
 		/*
 		//resizing image
 		resize(LeftImage, LeftScaleImage, cv::Size(), 0.5, 0.5, INTER_AREA);
 		resize(RightImage, RightScaleImage, cv::Size(), 0.5, 0.5, INTER_AREA);
-		
+
 		//performing matching
 		bm_left->compute(LeftScaleImage, RightScaleImage, left_disp);
 		bm_right->compute(RightScaleImage, LeftScaleImage, right_disp);
-		
+
 		//performing filtering
 		wls_filter->setLambda(8000.00);
 		wls_filter->setSigmaColor(1.5);
@@ -93,7 +93,7 @@ void DepthViewer::DisparityCalculations()
 		cout << ss.str() << endl;
 		}
 		*/
-		
+
 		//Display the Images
 		imshow("Disparity Map", gDisparityMap_viz);
 		waitKey(1);
@@ -103,9 +103,9 @@ void DepthViewer::DisparityCalculations()
 
 }
 
-void DepthViewer::CircleDetection() 
+void DepthViewer::CircleDetection()
 {
-	
+
 	vector<Vec3f> circles;
 	Mat imageToProcess;
 	while (1)
@@ -122,14 +122,14 @@ void DepthViewer::CircleDetection()
 		imshow("Left Image", LeftImage);
 		waitKey(1);
 	}
-	
+
 }
 
 
 //Streams the input from the camera
 void DepthViewer::CameraStreaming()
 {
-	
+
 	while (1)
 	{
 		//auto started = std::chrono::high_resolution_clock::now();

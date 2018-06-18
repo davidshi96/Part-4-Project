@@ -28,3 +28,9 @@
 *.exe
 *.out
 *.app
+Test/.vs/Test/v15/.suo
+*.tlog
+*.idb
+*.pdb
+*.ilk
+*.pdb
