@@ -164,14 +164,9 @@ private:
 
 	//variables needed for fast disparity calculations
 
-	cv::Mat left_disp, right_disp;
-	cv::Mat LeftScaleImage, RightScaleImage;
-	cv::Mat filtered_disp;
-
-    cv::Mat LeftDisparity, RDisparity;
-	cv::Mat LScaleImage, RScaleImage;
-	cv::Mat disp_filtered, mDisp_WR;
-	cv::Mat ScaledDisparityMap_viz, ScaledDisparityMap;
+	//cv::Mat left_disp, right_disp;
+	//cv::Mat LeftScaleImage, RightScaleImage;
+	//cv::Mat filtered_disp;
 
 	//BM method Parameters for computing Disparity Map
 	int bm_preFilterSize;

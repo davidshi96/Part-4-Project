@@ -525,6 +525,11 @@ BOOL Disparity::SetAlgorithmParam()
 //Estimates the disparity of the camera
 BOOL Disparity::GetDisparity(cv::Mat LImage, cv::Mat RImage, cv::Mat *mDisparityMap, cv::Mat *FilteredDisparity)
 {
+	cv::Mat LeftDisparity, RDisparity;
+	cv::Mat LScaleImage, RScaleImage;
+	cv::Mat disp_filtered, mDisp_WR;
+	cv::Mat ScaledDisparityMap_viz, ScaledDisparityMap;
+
 	//Scale value
 	e_ScaleImage = LIMIT(e_ScaleImage, 0.20, 1);
 

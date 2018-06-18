@@ -39,14 +39,32 @@ void DepthViewer::DisparityCalculations() {
 
 	float DepthValue = 0;
 	Mat gDisparityMap, gDisparityMap_viz;
-	//Mouse callback set to disparity window
+
 	while (1)
 	{
 		auto started = std::chrono::high_resolution_clock::now();
 
 		//Get disparity
-		_Disparity.GetDisparity(LeftImage, RightImage, &gDisparityMap, &gDisparityMap_viz);
+		//_Disparity.GetDisparity(LeftImage, RightImage, &gDisparityMap, &gDisparityMap_viz);
 		
+		
+		//resizing image
+		resize(LeftImage, LeftScaleImage, cv::Size(), 0.5, 0.5, INTER_LINEAR_EXACT);
+		resize(RightImage, RightScaleImage, cv::Size(), 0.5, 0.5, INTER_LINEAR_EXACT);
+
+		//performing matching
+		bm_left->compute(LeftScaleImage, RightScaleImage, left_disp);
+		bm_right->compute(RightScaleImage, LeftScaleImage, right_disp);
+
+		//performing filtering
+		wls_filter->setLambda(8000.00);
+		wls_filter->setSigmaColor(1.5);
+		wls_filter->filter(left_disp, LeftImage, filtered_disp, right_disp);
+
+		getDisparityVis(filtered_disp, filtered_disp_vis, 5.0);
+		
+		/*
+
 		//Estimate the Depth of the point selected
 		_Disparity.EstimateDepth(g_SelectedPoint, &DepthValue);
 
@@ -60,9 +78,9 @@ void DepthViewer::DisparityCalculations() {
 		//DisplayText(gDisparityMap_viz, ss.str(), g_SelectedPoint);
 		cout << ss.str() << endl;
 		}
-		
+		*/
 		//Display the Images
-		imshow("Disparity Map", gDisparityMap_viz);
+		imshow("Disparity Map", filtered_disp_vis);
 		waitKey(1);
 		auto done = std::chrono::high_resolution_clock::now();
 		std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(done - started).count() << std::endl;
