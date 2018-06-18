@@ -42,7 +42,7 @@ void DepthViewer::DisparityCalculations() {
 	//Mouse callback set to disparity window
 	while (1)
 	{
-		//auto started = std::chrono::high_resolution_clock::now();
+		auto started = std::chrono::high_resolution_clock::now();
 
 		//Get disparity
 		_Disparity.GetDisparity(LeftImage, RightImage, &gDisparityMap, &gDisparityMap_viz);
@@ -64,8 +64,8 @@ void DepthViewer::DisparityCalculations() {
 		//Display the Images
 		imshow("Disparity Map", gDisparityMap_viz);
 		waitKey(1);
-		//auto done = std::chrono::high_resolution_clock::now();
-		//std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(done - started).count() << std::endl;
+		auto done = std::chrono::high_resolution_clock::now();
+		std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(done - started).count() << std::endl;
 	}
 
 }
