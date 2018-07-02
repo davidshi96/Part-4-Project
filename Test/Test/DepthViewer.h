@@ -38,7 +38,12 @@ private:
 	Disparity _Disparity;	
 
 	cv::Mat LeftImage, RightImage;
-
+	int XDist = 0;
+	int prevX, prevY;
+	int YDist = 0;
+	float DepthValue = 0;
+	int XMiddle = 0, YMiddle = 0;
+	bool circlesFound;
 
 };
 

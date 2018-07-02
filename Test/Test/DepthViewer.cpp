@@ -5,6 +5,7 @@
 
 #include "stdafx.h"
 #include "DepthViewer.h"
+#include <math.h>
 #include <chrono>
 
 //Local point to access the user selected value
@@ -26,7 +27,7 @@ void DepthViewer::init()
 
 	//setting up camera modes
 	_Disparity.SetStreamMode(MASTERMODE);
-	_Disparity.SetAutoExposure();
+	//_Disparity.SetAutoExposure();
 	_Disparity.SetBrightness(5);
 
 
@@ -37,9 +38,10 @@ void DepthViewer::init()
 
 void DepthViewer::DisparityCalculations() 
 {
-	float DepthValue = 0;
-	Mat gDisparityMap, gDisparityMap_viz;
 	
+	Mat gDisparityMap, gDisparityMap_viz;
+	int depth;
+	int prevDepth = 0;
 	/*
 	//setup for my own disparity filter
 	cv::Ptr<cv::StereoBM> bm_left;
@@ -61,7 +63,14 @@ void DepthViewer::DisparityCalculations()
 
 		//Get disparity
 		_Disparity.GetDisparity(LeftImage, RightImage, &gDisparityMap, &gDisparityMap_viz);
-		
+		if (XMiddle == 0 && YMiddle == 0)
+		{
+			XMiddle = gDisparityMap_viz.cols / 2;
+			YMiddle = gDisparityMap_viz.rows / 2;
+		}
+		line(gDisparityMap_viz, Point(0, YMiddle), Point(gDisparityMap_viz.cols, YMiddle), Scalar(0, 0, 0), 1);
+		line(gDisparityMap_viz, Point(XMiddle, 0), Point(XMiddle, gDisparityMap_viz.rows), Scalar(0, 0, 0), 1);
+
 		/*
 		//resizing image
 		resize(LeftImage, LeftScaleImage, cv::Size(), 0.5, 0.5, INTER_AREA);
@@ -78,19 +87,44 @@ void DepthViewer::DisparityCalculations()
 
 		getDisparityVis(filtered_disp, filtered_disp_vis, 5.0);
 		*/
-		
-		//Estimate the Depth of the point selected
-		_Disparity.EstimateDepth(g_SelectedPoint, &DepthValue);
 
-		//mark the center of the circle
-		if(g_SelectedPoint.x > -1 && DepthValue > 0) 
-		circle(gDisparityMap_viz, g_SelectedPoint, 3, Scalar::all(0), 3, 8);
+		// Estimate the Depth of the point selected
+		_Disparity.EstimateDepth(g_SelectedPoint, &DepthValue);
+			
 
 		if(DepthValue > 0)
 		{
-		stringstream ss;
-		ss << DepthValue / 10 << " cm\0" ;
-		putText(gDisparityMap_viz, ss.str(), g_SelectedPoint, 2, 1.0, cv::Scalar(255, 255, 0), 2, 8, false);
+			if (prevDepth == 0)
+			{
+				prevDepth = round(DepthValue);
+			}
+
+			if (circlesFound == true)
+			{
+				depth = round(DepthValue);
+				prevDepth = round(DepthValue);
+
+				/*
+				if ((DepthValue < 1.25*prevDepth) && (DepthValue > 0.75*prevDepth))
+				{
+					depth = round(DepthValue);
+					prevDepth = round(DepthValue);
+				}
+				else
+				{
+					depth = prevDepth;
+				}
+				*/
+				stringstream ss;
+				ss << "depth = " + to_string(depth) + " X = " + to_string(XDist) + " Y = " + to_string(YDist) << " mm\0";
+				cv::circle(gDisparityMap_viz, g_SelectedPoint, 3, Scalar::all(0), 3, 8);
+				putText(gDisparityMap_viz, ss.str(), g_SelectedPoint, 2, 0.5, Scalar(0, 0, 0), 2, 8, false);
+			}
+			else
+			{
+				depth = prevDepth;
+			}
+			//cout << "Actual Depth =  " + to_string(DepthValue) + " prevDepth = " + to_string(prevDepth) << endl;
 		}
 		
 		
@@ -107,28 +141,51 @@ void DepthViewer::CircleDetection()
 {
 	vector<Vec3f> circles;
 	Mat imageToProcess;
+	double scale;
+	int XPix = 0;
+	int YPix = 0;
 	while (1)
 	{
-		//auto started = std::chrono::high_resolution_clock::now();
-
-		//GaussianBlur(LeftImage, imageToProcess, Size(9, 1), 2, 2);
-		//GaussianBlur(imageToProcess, imageToProcess, Size(1, 9), 2, 2);
-
-		blur(LeftImage, imageToProcess, Size(9, 9), Point(-1, -1), BORDER_DEFAULT);
-
-		// Apply the Hough Transform to find the circles
-		HoughCircles(imageToProcess, circles, CV_HOUGH_GRADIENT, 1, imageToProcess.rows/2, 100, 50, 5, 200);
-
-		if (circles.size() > 0) {
-			g_SelectedPoint = Point(cvRound(circles[0][0]), cvRound(circles[0][1]));
-		}
-		else 
+		if (!LeftImage.empty())
 		{
-			g_SelectedPoint = Point(-1, -1);
+			//auto started = std::chrono::high_resolution_clock::now();
 
+			//GaussianBlur(LeftImage, imageToProcess, Size(9, 1), 2, 2);
+			//GaussianBlur(imageToProcess, imageToProcess, Size(1, 9), 2, 2);
+			blur(LeftImage, imageToProcess, Size(7, 7), Point(-1, -1), BORDER_DEFAULT);
+
+			// Apply the Hough Transform to find the circles
+			HoughCircles(imageToProcess, circles, CV_HOUGH_GRADIENT, 1, imageToProcess.rows / 2, 100, 50, 5, 200);
+			// cout << to_string(LeftImage.rows) + "    " + to_string(LeftImage.cols) << endl;
+			if (circles.size() > 0) {
+				if ((cvRound(circles[0][0]) > 0) && (cvRound(circles[0][1]) > 0))
+				{
+					circlesFound = true;
+					g_SelectedPoint = Point(cvRound(circles[0][0]), cvRound(circles[0][1]));
+					YPix = -(cvRound(circles[0][1]) - YMiddle);
+					XPix = cvRound(circles[0][0]) - XMiddle;
+
+					//cout << "Y AXIS = " + to_string(YPix) + " X AXIS = " + to_string(XPix) << endl;
+
+					scale = exp(log(DepthValue)*-0.9932 + 6.5735);
+
+					YDist = YPix / scale;
+					XDist = XPix / scale;
+
+				}
+
+				//cout << "center of detected circle = " + to_string(cvRound(circles[0][0])) + " , " + to_string(cvRound(circles[0][1])) +
+				//	"  Y AXIS = " + to_string(YDist) + " X AXIS = " + to_string(XDist) << endl;
+			}
+			else
+			{
+				circlesFound = false;
+			}
+			circles.clear();
+			//cout <<"Y AXIS = " + to_string(YPix) + " X AXIS = " + to_string(XPix) << endl;
+			//auto done = std::chrono::high_resolution_clock::now();
+			//std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(done - started).count() << std::endl;
 		}
-		//auto done = std::chrono::high_resolution_clock::now();
-		//std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(done - started).count() << std::endl;
 	}
 	
 }
@@ -137,7 +194,7 @@ void DepthViewer::CircleDetection()
 //Streams the input from the camera
 void DepthViewer::CameraStreaming()
 {
-	
+	Mat left, right;
 	while (1)
 	{
 		//auto started = std::chrono::high_resolution_clock::now();
@@ -145,8 +202,10 @@ void DepthViewer::CameraStreaming()
 		{
 			destroyAllWindows();
 			break;
-		}
+		} 
 
+		//flip(left, LeftImage, 1);
+		//flip(right, RightImage, 1);
 		//Display the Images
 		imshow("Left Image", LeftImage);
 		imshow("Right Image", RightImage);

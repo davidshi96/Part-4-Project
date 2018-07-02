@@ -79,4 +79,9 @@ c:\part-4-project\test\test\tara.h(232): warning C4251: 'Tara::CameraEnumeration
           [
               _Ty=cv::Size
           ]
+c:\part-4-project\test\test\depthviewer.cpp(99): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\part-4-project\test\test\depthviewer.cpp(104): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\part-4-project\test\test\depthviewer.cpp(105): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\part-4-project\test\test\depthviewer.cpp(172): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\part-4-project\test\test\depthviewer.cpp(173): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
   Test.vcxproj -> C:\Part-4-Project\Test\x64\Debug\Test.exe
