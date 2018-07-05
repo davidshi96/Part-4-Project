@@ -1,4 +1,4 @@
-﻿  DepthViewer.cpp
+﻿  Test.cpp
 c:\part-4-project\test\test\tara.h(76): warning C4251: 'Tara::TaraCamParameters::Q': class 'cv::Mat' needs to have dll-interface to be used by clients of class 'Tara::TaraCamParameters'
   c:\opencv\opencv\build\include\opencv2\core\mat.hpp(772): note: see declaration of 'cv::Mat'
 c:\part-4-project\test\test\tara.h(96): warning C4251: 'Tara::TaraCamParameters::M1': class 'cv::Mat' needs to have dll-interface to be used by clients of class 'Tara::TaraCamParameters'
@@ -79,9 +79,4 @@ c:\part-4-project\test\test\tara.h(232): warning C4251: 'Tara::CameraEnumeration
           [
               _Ty=cv::Size
           ]
-c:\part-4-project\test\test\depthviewer.cpp(99): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\part-4-project\test\test\depthviewer.cpp(104): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\part-4-project\test\test\depthviewer.cpp(105): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\part-4-project\test\test\depthviewer.cpp(172): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-c:\part-4-project\test\test\depthviewer.cpp(173): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
   Test.vcxproj -> C:\Part-4-Project\Test\x64\Debug\Test.exe

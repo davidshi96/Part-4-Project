@@ -107,7 +107,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>%OPENCV_CONTRIB_DIR%\modules\ximgproc\include\opencv2;%OPENCV_DIR%\build\include\opencv2;%OPENCV_DIR%\build\include\opencv;%OPENCV_DIR%\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%OPENCV_CONTRIB_DIR%\modules\ximgproc\include\opencv2;%OPENCV_DIR%\build\include\opencv2;%OPENCV_DIR%\build\include\opencv;%OPENCV_DIR%\build\include;C:\Program Files (x86)\Windows Kits\10\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -154,11 +154,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DepthViewer.h" />
+    <ClInclude Include="Server.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DepthViewer.cpp" />
+    <ClCompile Include="Server.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

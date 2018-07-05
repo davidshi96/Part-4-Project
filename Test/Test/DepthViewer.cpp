@@ -3,14 +3,17 @@
 			   using the disparity image computed.
 **********************************************************************/
 
+
+
 #include "stdafx.h"
 #include "DepthViewer.h"
 #include <math.h>
 #include <chrono>
 
+
+
 //Local point to access the user selected value
 Point g_SelectedPoint(-1, -1);
-
 
 void DepthViewer::init()
 {
@@ -18,10 +21,11 @@ void DepthViewer::init()
 	{
 		return;
 	}
+
 	_Disparity.GrabFrame(&LeftImage, &RightImage);
 	//Window Creation
-	namedWindow("Left Image", WINDOW_AUTOSIZE);
-	namedWindow("Right Image", WINDOW_AUTOSIZE);
+	//namedWindow("Left Image", WINDOW_AUTOSIZE);
+	//namedWindow("Right Image", WINDOW_AUTOSIZE);
 	namedWindow("Disparity Map", WINDOW_AUTOSIZE);
 	//setMouseCallback("Disparity Map", DepthPointSelection);
 
@@ -29,18 +33,16 @@ void DepthViewer::init()
 	_Disparity.SetStreamMode(MASTERMODE);
 	//_Disparity.SetAutoExposure();
 	_Disparity.SetBrightness(5);
-
-
-
+	
 }
 
 
 
-void DepthViewer::DisparityCalculations() 
+void DepthViewer::DisparityCalculations(int *X, int *Y, int *DEPTH) 
 {
 	
 	Mat gDisparityMap, gDisparityMap_viz;
-	int depth;
+
 	int prevDepth = 0;
 	/*
 	//setup for my own disparity filter
@@ -62,6 +64,11 @@ void DepthViewer::DisparityCalculations()
 		//auto started = std::chrono::high_resolution_clock::now();
 
 		//Get disparity
+		if (!_Disparity.GrabFrame(&LeftImage, &RightImage)) //Reads the frame and returns the rectified image
+		{
+			destroyAllWindows();
+			break;
+		}
 		_Disparity.GetDisparity(LeftImage, RightImage, &gDisparityMap, &gDisparityMap_viz);
 		if (XMiddle == 0 && YMiddle == 0)
 		{
@@ -119,6 +126,9 @@ void DepthViewer::DisparityCalculations()
 				ss << "depth = " + to_string(depth) + " X = " + to_string(XDist) + " Y = " + to_string(YDist) << " mm\0";
 				cv::circle(gDisparityMap_viz, g_SelectedPoint, 3, Scalar::all(0), 3, 8);
 				putText(gDisparityMap_viz, ss.str(), g_SelectedPoint, 2, 0.5, Scalar(0, 0, 0), 2, 8, false);
+				*X = XDist;
+				*Y = YDist;
+				*DEPTH = depth;
 			}
 			else
 			{
@@ -146,7 +156,8 @@ void DepthViewer::CircleDetection()
 	int YPix = 0;
 	while (1)
 	{
-		if (!LeftImage.empty())
+
+		if (!LeftImage.empty() && !RightImage.empty())
 		{
 			//auto started = std::chrono::high_resolution_clock::now();
 
@@ -203,7 +214,6 @@ void DepthViewer::CameraStreaming()
 			destroyAllWindows();
 			break;
 		} 
-
 		//flip(left, LeftImage, 1);
 		//flip(right, RightImage, 1);
 		//Display the Images
