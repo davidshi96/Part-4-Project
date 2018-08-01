@@ -1,22 +1,12 @@
-///////////////////////////////////////////////////////////////////////////
-//
-// Copyright (c) 2016, e-Con Systems.
-//
-// All rights reserved.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS.
-// IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR 
-// ANY DIRECT/INDIRECT DAMAGES HOWEVER CAUSED AND ON ANY THEORY OF 
-// LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
-///////////////////////////////////////////////////////////////////////////
 #pragma once
+
 #include "Tara.h"
+#include <math.h>
+#include <chrono>
 
 using namespace Tara;
 using namespace cv;
+using namespace cv::ximgproc;
 
 #define SEE3CAM_STEREO_AUTO_EXPOSURE		1
 
@@ -24,19 +14,42 @@ class DepthViewer
 {
 public:
 
-	//Initialise
-	int Init();
+	void CameraStreaming();
+	void CircleDetection(int *X, int *Y, int *DEPTH, int *foundCircle);
+	void DisparityCalculations();
+	void init();
 
 private:
 
 	int ManualExposure;
 
-	//Camera Streaming
-	int CameraStreaming();
-
 	//Object to access Disparity
 	Disparity _Disparity;	
-};
 
-//Call back function
-void DepthPointSelection(int MouseEvent, int x, int y, int flags, void* param) ;
+	cv::Mat LeftImage, RightImage;
+	int depth = 0, XDist = 0, YDist = 0;
+	int prevX = 0, prevY = 0;
+	float DepthValue = 0;
+	int XMiddle = 0, YMiddle = 0;
+	bool circlesFound = false;
+
+	//disparity calc
+	Mat LDisp, RDisp;
+	Mat gDisparityMap, gDisparityMap_viz;
+
+	int prevDepth = 0;
+
+	//circle detect
+	vector<Vec3f> circles;
+	Mat imageToProcess, scaledImg;
+	double scale = 1;
+	int XPix = 0;
+	int YPix = 0;
+
+	float imgScale = .6666667;
+
+	long frames = 0;
+
+	SOCKET clientSocket;
+
+};

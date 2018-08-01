@@ -530,7 +530,7 @@ BOOL Disparity::GetDisparity(cv::Mat LImage, cv::Mat RImage, cv::Mat *mDisparity
 	cv::Mat LScaleImage, RScaleImage;
 	cv::Mat disp_filtered, mDisp_WR;
 	cv::Mat ScaledDisparityMap_viz, ScaledDisparityMap;
-	
+
 	//Scale value
 	e_ScaleImage = LIMIT(e_ScaleImage, 0.20, 1);
 	

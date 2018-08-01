@@ -1,244 +1,174 @@
-///////////////////////////////////////////////////////////////////////////
-//
-// Copyright (c) 2016, e-Con Systems.
-//
-// All rights reserved.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS.
-// IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR 
-// ANY DIRECT/INDIRECT DAMAGES HOWEVER CAUSED AND ON ANY THEORY OF 
-// LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
-///////////////////////////////////////////////////////////////////////////
-
 /**********************************************************************
  DepthViewer: Displays the depth of the point selected by the user
 			   using the disparity image computed.
 **********************************************************************/
 
+
+
 #include "stdafx.h"
 #include "DepthViewer.h"
+
+//#define _HAS_ITERATOR_DEBUGGING 0
+
+
+
 
 //Local point to access the user selected value
 Point g_SelectedPoint(-1, -1);
 
-//Initialises all the necessary files
-int DepthViewer::Init()
+void DepthViewer::init()
 {
-	cout << endl << "Depth Viewer Application" << endl  << endl;
-	//Initialise the Camera
-	if(!_Disparity.InitCamera(true, true))
+	if (!_Disparity.InitCamera(true, true))
 	{
-		return 0;
+		return;
+	}
+
+	_Disparity.GrabFrame(&LeftImage, &RightImage);
+	//Window Creation
+	//namedWindow("Left Image", WINDOW_AUTOSIZE);
+	//namedWindow("Right Image", WINDOW_AUTOSIZE);
+	namedWindow("Disparity Map", WINDOW_AUTOSIZE);
+	//setMouseCallback("Disparity Map", DepthPointSelection);
+
+	//setting up camera modes
+	_Disparity.SetStreamMode(MASTERMODE);
+	//_Disparity.SetAutoExposure();
+	_Disparity.SetBrightness(5);
+	
+}
+
+
+
+void DepthViewer::DisparityCalculations() 
+{
+	/*
+	//setup for my own disparity filter
+	cv::Ptr<cv::StereoBM> bm_left;
+	cv::Ptr<cv::StereoMatcher> bm_right;
+	cv::Ptr<cv::ximgproc::DisparityWLSFilter> wls_filter;
+
+	cv::Mat left_disp, right_disp;
+	cv::Mat LeftScaleImage, RightScaleImage;
+	cv::Mat filtered_disp, raw_disp_vis, filtered_disp_vis;
+
+	bm_left = StereoBM::create(16, 15);
+	wls_filter = createDisparityWLSFilter(bm_left);
+	bm_right = StereoBM::create(16, 15);
+	
+	*/
+
+	//Get disparity
+	if (_Disparity.GrabFrame(&LeftImage, &RightImage))
+	{
+
+		//imshow("Left Image", LeftImage);
+		//imshow("Right Image", RightImage);
+
+		//scale left and right images, it should rescale the disparity map back into its original size. 
+		cv::resize(LeftImage, LDisp, cv::Size(), imgScale, imgScale);
+		cv::resize(RightImage, RDisp, cv::Size(), imgScale, imgScale);
+		_Disparity.GetDisparity(LDisp, RDisp, &gDisparityMap, &gDisparityMap_viz);
+		/*
+		//resizing image
+		resize(LeftImage, LeftScaleImage, cv::Size(), 0.25, 0.25, INTER_AREA);
+		resize(RightImage, RightScaleImage, cv::Size(), 0.25, 0.25, INTER_AREA);
+
+		//performing matching
+		bm_left->compute(LeftScaleImage, RightScaleImage, left_disp);
+		bm_right->compute(RightScaleImage, LeftScaleImage, right_disp);
+
+		//performing filtering
+		wls_filter->setLambda(8000.00);
+		wls_filter->setSigmaColor(1.5);
+		wls_filter->filter(left_disp, LeftImage, gDisparityMap, right_disp);
+
+		getDisparityVis(gDisparityMap, gDisparityMap_viz, 5.0);
+		*/
+		if (XMiddle == 0 && YMiddle == 0)
+		{
+			XMiddle = gDisparityMap_viz.cols / 2;
+			YMiddle = gDisparityMap_viz.rows / 2;
+		}
+		line(gDisparityMap_viz, Point(0, YMiddle), Point(gDisparityMap_viz.cols, YMiddle), Scalar(0, 0, 0), 1);
+		line(gDisparityMap_viz, Point(XMiddle, 0), Point(XMiddle, gDisparityMap_viz.rows), Scalar(0, 0, 0), 1);
+
+		if (circlesFound)
+		{
+			stringstream ss;
+			ss << "X = " + to_string(XDist) + " Y = " + to_string(YDist) + " depth = " + to_string(depth) << " mm\0";
+			cv::circle(gDisparityMap_viz, g_SelectedPoint, 3, Scalar::all(0), 3, 8);
+			putText(gDisparityMap_viz, ss.str(), g_SelectedPoint, 2, 0.5, Scalar(0, 0, 0), 2, 8, false);
+		}
+	}
+	cv::imshow("Disparity Map", gDisparityMap_viz);
+}
+
+void DepthViewer::CircleDetection(int *X, int *Y, int *DEPTH, int *foundCircle)
+{
+	if (!LeftImage.empty() && !RightImage.empty())
+	{
+		//GaussianBlur(LeftImage, imageToProcess, Size(9, 1), 2, 2);
+		//GaussianBlur(imageToProcess, imageToProcess, Size(1, 9), 2, 2);
+
+		blur(LeftImage, imageToProcess, Size(3, 3), Point(-1, -1), BORDER_DEFAULT);
+		
+		circles.clear();
+		//scale image down
+		//cv::resize(LeftImage, imageToProcess, cv::Size(), imgScale, imgScale, INTER_CUBIC);
+
+		// Apply the Hough Transform to find the circles
+		HoughCircles(imageToProcess, circles, CV_HOUGH_GRADIENT, 1, imageToProcess.cols, 100, 48); //static_cast<int>(10*imgScale), static_cast<int>(240*imgScale)
+
+		if (circles.size() > 0) {
+			if ((cvRound(circles[0][0]) > 0) && (cvRound(circles[0][1]) > 0))
+			{
+				circlesFound = true;
+				g_SelectedPoint = Point(cvRound(circles[0][0]), cvRound(circles[0][1]));
+				_Disparity.EstimateDepth(g_SelectedPoint, &DepthValue);
+
+				if (DepthValue > 0 && DepthValue < 10000)
+				{
+					if (prevDepth == 0)
+					{
+						prevDepth = static_cast<int>(DepthValue);
+					}
+				
+					depth = static_cast<int>(DepthValue) + 122;
+					prevDepth = static_cast<int>(DepthValue) + 122;
+					
+					YPix = -(cvRound(circles[0][1]) - YMiddle);
+					XPix = cvRound(circles[0][0]) - XMiddle;
+
+					scale = exp(log(DepthValue + 122)*-0.9932 + 6.5735);
+
+					YDist = static_cast<int>(YPix / scale);
+					XDist = static_cast<int>(XPix / scale);
+
+
+					*X = XDist;
+					*Y = YDist;
+					*DEPTH = depth;
+					*foundCircle = 1;
+				}
+			}
+		}
+		else
+		{
+			circlesFound = false;
+			depth = prevDepth;
+			*foundCircle = 0;
+		}
+		
 	}
 	
-	//Camera Streaming
-	CameraStreaming();
-
-	return 1;
 }
 
 //Streams the input from the camera
-int DepthViewer::CameraStreaming()
-{	
-	float DepthValue = 0;
-	char WaitKeyStatus;
-	bool GrayScaleDisplay = false;
-	Mat LeftImage, RightImage;
-	Mat gDisparityMap, gDisparityMap_viz;
-	int BrightnessVal = 5;		//Default value
-
-	//Window Creation
-	//namedWindow("Disparity Map", WINDOW_AUTOSIZE);
-	namedWindow("Left Image", WINDOW_AUTOSIZE);
-	//namedWindow("Right Image", WINDOW_AUTOSIZE);
-
-	//Mouse callback set to disparity window
-    //setMouseCallback("Disparity Map", DepthPointSelection);
-
-	cout << endl << "Press q/Q/Esc on the Image Window to quit the application!" << endl;
-	cout << endl << "Press b/B on the Image Window to change the brightness of the camera" << endl;
-	cout << endl << "Press t/T on the Image Window to change to Trigger Mode" << endl;
-	cout << endl << "Press m/M on the Image Window to change to Master Mode" << endl;
-	cout << endl << "Press a/A on the Image Window to change to Auto exposure  of the camera" << endl;
-	cout << endl << "Press e/E on the Image Window to change the exposure of the camera" << endl;
-	cout << endl << "Press d/D on the Image Window to view the grayscale disparity map!" << endl << endl;
-
-	cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-	string Inputline;
-	
-	//Displays the filtered disparity, the depth of the point selected is displayed
-	while(1)
-	{
-		if(!_Disparity.GrabFrame(&LeftImage, &RightImage)) //Reads the frame and returns the rectified image
-		{
-			destroyAllWindows();
-			break;
-		}
-	
-		//Get disparity
-		//_Disparity.GetDisparity(LeftImage, RightImage, &gDisparityMap, &gDisparityMap_viz);
-		/*
-		//Estimate the Depth of the point selected
-		_Disparity.EstimateDepth(g_SelectedPoint, &DepthValue);
-
-		if(g_SelectedPoint.x > -1 && DepthValue > 0) //Mark the point selected by the user
-			circle(gDisparityMap_viz, g_SelectedPoint, 3, Scalar::all(0), 3, 8);
-
-		if(DepthValue > 0)
-		{
-			stringstream ss;
-			ss << DepthValue / 10 << " cm\0" ;
-			//DisplayText(gDisparityMap_viz, ss.str(), g_SelectedPoint);
-			cout << ss.str() << endl;
-		}
-		*/
-		//Display the Images
-		//imshow("Disparity Map", gDisparityMap_viz);
-		//waitKey(1);
-		imshow("Left Image",  LeftImage);
-		//waitKey(1);
-		//imshow("Right Image", RightImage);
-		//waitKey(1);
-		if(GrayScaleDisplay)
-		{			
-			imshow("Disparity Map GrayScale", gDisparityMap);						
-		}
-
-
-
-		//waits for the Key input
-		WaitKeyStatus = waitKey(1);
-		if(WaitKeyStatus == 'q' || WaitKeyStatus == 'Q' || WaitKeyStatus == 27) //Quit
-		{	
-			destroyAllWindows();
-			break;
-		}		
-		else if(WaitKeyStatus == 'd' || WaitKeyStatus == 'D')
-		{	
-			if(!GrayScaleDisplay)
-			{
-				GrayScaleDisplay = true;
-				namedWindow("Disparity Map GrayScale", WINDOW_AUTOSIZE);
-			}
-			else 
-			{
-				GrayScaleDisplay = false;
-				destroyWindow("Disparity Map GrayScale");
-			}
-			
-		}
-		//Sets up the mode
-		else if(WaitKeyStatus == 'T' || WaitKeyStatus == 't' ) //Stream Mode 0 - Trigger Mode 1 - Master Mode
-		{			
-			if(_Disparity.SetStreamMode(TRIGGERMODE))
-			{
-				cout << endl << "Switching to Trigger Mode!!" << endl;
-			}
-			else
-			{
-				cout << endl << "Selected mode and the current mode is the same!" << endl;
-			}
-		}
-
-		//Sets up the mode
-		else if(WaitKeyStatus == 'M' || WaitKeyStatus == 'm' ) //Stream Mode 0 - Trigger Mode 1 - Master Mode
-		{			
-			if(_Disparity.SetStreamMode(MASTERMODE))
-			{
-				cout << endl << "Switching to Manual Mode!!" << endl;
-			}
-			else
-			{
-				cout << endl << "Selected mode and the current mode is the same!" << endl;
-			}
-		}		
-		//Sets up Auto Exposure
-		else if(WaitKeyStatus == 'a' || WaitKeyStatus == 'A' ) //Auto Exposure
-		{
-			_Disparity.SetAutoExposure();
-		}
-		else if(WaitKeyStatus == 'e' || WaitKeyStatus == 'E') //Set Exposure
-		{		
-			cout << endl << "Enter the Exposure Value Range(10 to 1000000 micro seconds): " << endl;
-			
-			ManualExposure = 0;			
-
-			while(getline(std::cin, Inputline)) //To avoid floats and Alphanumeric strings
-			{			
-				std::stringstream ss(Inputline);
-				if (ss >> ManualExposure)
-				{					
-					if (ss.eof())
-					{  						
-						if(ManualExposure >= SEE3CAM_STEREO_EXPOSURE_MIN && ManualExposure <= SEE3CAM_STEREO_EXPOSURE_MAX)
-						{ 							
-							//Setting up the exposure
-							_Disparity.SetExposure(ManualExposure);	
-						}
-						else
-						{							
-							cout << endl << " Value out of Range - Invalid!!" << endl;							
-						}	
-						break;
-					}
-				}
-				ManualExposure = -1;
-				break;
-			}
-			
-			if(ManualExposure == -1)
-			{ 				
-				cout << endl << " Value out of Range - Invalid!!" << endl;
-			}			
-		}
-		else if(WaitKeyStatus == 'b' || WaitKeyStatus == 'B') //Brightness
-		{	
-			cout << endl << "Enter the Brightness Value, Range(1 to 7): " << endl;
-						
-			BrightnessVal = 0;			
-
-			while(getline(std::cin, Inputline)) //To avoid floats and Alphanumeric strings
-			{			
-				std::stringstream ss(Inputline);
-				if (ss >> BrightnessVal)
-				{					
-					if (ss.eof())
-					{  						
-						//Setting up the brightness of the camera
-						if (BrightnessVal >= 1  && BrightnessVal <= 7)
-						{
-							//Setting up the exposure
-							_Disparity.SetBrightness(BrightnessVal);
-						}			
-						else
-						{
-							 cout << endl << " Value out of Range - Invalid!!" << endl;
-						}	
-						break;
-					}
-				}
-				BrightnessVal = -1;
-				break;
-			}
-			
-			if(BrightnessVal == -1)
-			{ 			
-				cout << endl << " Value out of Range - Invalid!!" << endl;
-			}							
-		}
-	}
-	
-	return 1;
-}
-
-//Call back function
-void DepthPointSelection(int MouseEvent, int x, int y, int flags, void* param) 
+void DepthViewer::CameraStreaming()
 {
-    if(MouseEvent == CV_EVENT_LBUTTONDOWN)  //Clicked
-	{
-		g_SelectedPoint = Point(x, y);
-    }
+	_Disparity.GrabFrame(&LeftImage, &RightImage); //Reads the frame and returns the rectified image
+
+	//Display the Images
+	//imshow("Left Image", LeftImage);
+	//imshow("Right Image", RightImage);
 }

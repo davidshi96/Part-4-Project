@@ -24,10 +24,7 @@
     <ClInclude Include="DepthViewer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="eCAMFwSw.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenCVViewer.h">
+    <ClInclude Include="Server.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -41,7 +38,7 @@
     <ClCompile Include="DepthViewer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OpenCVViewer.cpp">
+    <ClCompile Include="Server.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -23,7 +23,7 @@
     <ProjectGuid>{73006516-9F1A-442B-8849-E8EE16E1C07E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Test</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -75,6 +75,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>%OPENCV_DIR%\build\x64\vc14\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -106,15 +107,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>%OPENCV_CONTRIB_DIR%\modules\ximgproc\include\opencv2;%OPENCV_DIR%\build\include\opencv2;%OPENCV_DIR%\build\include\opencv;%OPENCV_DIR%\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <MinimalRebuild>false</MinimalRebuild>
+      <AdditionalIncludeDirectories>%OPENCV_CONTRIB_DIR%\modules\ximgproc\include\opencv2;%OPENCV_DIR%\build\include\opencv2;%OPENCV_DIR%\build\include\opencv;%OPENCV_DIR%\build\include;C:\Program Files (x86)\Windows Kits\10\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>%OPENCV_DIR%\build\lib\Release;%OPENCV_DIR%\build\x64\vc14\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_world341d.lib;opencv_world341.lib;eCAMFwSw.lib;Tara.lib;opencv_ximgproc341.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>%OPENCV_DIR%\build\lib\Release;%OPENCV_DIR%\build\x64\vc14\lib;%OPENCV_DIR%\build\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world341d.lib;eCAMFwSw.lib;Tara.lib;opencv_core341d.lib;opencv_imgproc341d.lib;opencv_ximgproc341d.lib;opencv_highgui341d.lib;opencv_video341d.lib;opencv_features2d341d.lib;opencv_calib3d341d.lib;opencv_objdetect341d.lib;opencv_flann341d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -145,24 +144,26 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>%OPENCV_CONTRIB_DIR%\modules\ximgproc\include\opencv2;%OPENCV_DIR%\build\include\opencv2;%OPENCV_DIR%\build\include\opencv;%OPENCV_DIR%\build\include;C:\Program Files (x86)\Windows Kits\10\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>%OPENCV_DIR%\build\lib\Release;%OPENCV_DIR%\build\x64\vc14\lib;%OPENCV_DIR%\build\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world341.lib;eCAMFwSw.lib;Tara.lib;opencv_core341.lib;opencv_imgproc341.lib;opencv_ximgproc341.lib;opencv_highgui341.lib;opencv_video341.lib;opencv_features2d341.lib;opencv_calib3d341.lib;opencv_objdetect341.lib;opencv_flann341.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DepthViewer.h" />
-    <ClInclude Include="eCAMFwSw.h" />
-    <ClInclude Include="OpenCVViewer.h" />
+    <ClInclude Include="Server.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DepthViewer.cpp" />
-    <ClCompile Include="OpenCVViewer.cpp" />
+    <ClCompile Include="Server.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
