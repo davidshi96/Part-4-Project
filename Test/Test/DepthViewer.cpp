@@ -25,8 +25,8 @@ void DepthViewer::init()
 
 	_Disparity.GrabFrame(&LeftImage, &RightImage);
 	//Window Creation
-	namedWindow("Left Image", WINDOW_AUTOSIZE);
-	namedWindow("Right Image", WINDOW_AUTOSIZE);
+	//namedWindow("Left Image", WINDOW_AUTOSIZE);
+	//namedWindow("Right Image", WINDOW_AUTOSIZE);
 	namedWindow("Disparity Map", WINDOW_AUTOSIZE);
 	//setMouseCallback("Disparity Map", DepthPointSelection);
 
@@ -39,7 +39,7 @@ void DepthViewer::init()
 
 
 
-void DepthViewer::DisparityCalculations(int *X, int *Y, int *DEPTH, int *foundCircle) 
+void DepthViewer::DisparityCalculations() 
 {
 	/*
 	//setup for my own disparity filter
@@ -56,23 +56,17 @@ void DepthViewer::DisparityCalculations(int *X, int *Y, int *DEPTH, int *foundCi
 	bm_right = StereoBM::create(16, 15);
 	
 	*/
-	
-	
-	
 
 	//Get disparity
-
 	if (_Disparity.GrabFrame(&LeftImage, &RightImage))
 	{
 
-		imshow("Left Image", LeftImage);
-		imshow("Right Image", RightImage);
+		//imshow("Left Image", LeftImage);
+		//imshow("Right Image", RightImage);
 
 		//scale left and right images, it should rescale the disparity map back into its original size. 
-		cv::resize(LeftImage, LDisp, cv::Size(), imgScale, imgScale, INTER_CUBIC);
-		cv::resize(RightImage, RDisp, cv::Size(), imgScale, imgScale, INTER_CUBIC);
-		//imshow("Left Image", LDisp);
-		//imshow("Right Image", RDisp);
+		cv::resize(LeftImage, LDisp, cv::Size(), imgScale, imgScale);
+		cv::resize(RightImage, RDisp, cv::Size(), imgScale, imgScale);
 		_Disparity.GetDisparity(LDisp, RDisp, &gDisparityMap, &gDisparityMap_viz);
 		/*
 		//resizing image
@@ -92,87 +86,77 @@ void DepthViewer::DisparityCalculations(int *X, int *Y, int *DEPTH, int *foundCi
 		*/
 		if (XMiddle == 0 && YMiddle == 0)
 		{
-			//cout << gDisparityMap_viz.cols << " " << gDisparityMap_viz.rows << endl;
 			XMiddle = gDisparityMap_viz.cols / 2;
 			YMiddle = gDisparityMap_viz.rows / 2;
 		}
 		line(gDisparityMap_viz, Point(0, YMiddle), Point(gDisparityMap_viz.cols, YMiddle), Scalar(0, 0, 0), 1);
 		line(gDisparityMap_viz, Point(XMiddle, 0), Point(XMiddle, gDisparityMap_viz.rows), Scalar(0, 0, 0), 1);
 
-		_Disparity.EstimateDepth(g_SelectedPoint, &DepthValue);
-
-		if (DepthValue > 0)
+		if (circlesFound)
 		{
-			if (prevDepth == 0)
-			{
-				prevDepth = static_cast<int>(DepthValue);
-			}
-
-			if (circlesFound == true)
-			{
-				depth = static_cast<int>(DepthValue) + 122;
-				prevDepth = static_cast<int>(DepthValue) + 122;
-
-				stringstream ss;
-				ss << "X = " + to_string(XDist) + " Y = " + to_string(YDist) + " depth = " + to_string(depth) << " mm\0";
-				cv::circle(gDisparityMap_viz, g_SelectedPoint, 3, Scalar::all(0), 3, 8);
-				putText(gDisparityMap_viz, ss.str(), g_SelectedPoint, 2, 0.5, Scalar(0, 0, 0), 2, 8, false);
-				*X = XDist;
-				*Y = YDist;
-				*DEPTH = depth;
-				*foundCircle = 1;
-			}
-			else
-			{
-				depth = prevDepth;
-				*foundCircle = 0;
-			}
+			stringstream ss;
+			ss << "X = " + to_string(XDist) + " Y = " + to_string(YDist) + " depth = " + to_string(depth) << " mm\0";
+			cv::circle(gDisparityMap_viz, g_SelectedPoint, 3, Scalar::all(0), 3, 8);
+			putText(gDisparityMap_viz, ss.str(), g_SelectedPoint, 2, 0.5, Scalar(0, 0, 0), 2, 8, false);
 		}
 	}
 	cv::imshow("Disparity Map", gDisparityMap_viz);
 }
 
-void DepthViewer::CircleDetection() 
+void DepthViewer::CircleDetection(int *X, int *Y, int *DEPTH, int *foundCircle)
 {
 	if (!LeftImage.empty() && !RightImage.empty())
 	{
 		//GaussianBlur(LeftImage, imageToProcess, Size(9, 1), 2, 2);
 		//GaussianBlur(imageToProcess, imageToProcess, Size(1, 9), 2, 2);
 
-		//blur(LeftImage, imageToProcess, Size(3, 3), Point(-1, -1), BORDER_DEFAULT);
+		blur(LeftImage, imageToProcess, Size(3, 3), Point(-1, -1), BORDER_DEFAULT);
 		
 		circles.clear();
-		cv::resize(LeftImage, imageToProcess, cv::Size(), imgScale, imgScale, INTER_CUBIC);
-		//imshow("Scaled Image", imageToProcess);
-
 		//scale image down
+		//cv::resize(LeftImage, imageToProcess, cv::Size(), imgScale, imgScale, INTER_CUBIC);
 
-
-		//auto circleStart = chrono::high_resolution_clock::now();
 		// Apply the Hough Transform to find the circles
 		HoughCircles(imageToProcess, circles, CV_HOUGH_GRADIENT, 1, imageToProcess.cols, 100, 48); //static_cast<int>(10*imgScale), static_cast<int>(240*imgScale)
-		//auto circleEnd = chrono::high_resolution_clock::now();
-		//cout << to_string(chrono::duration_cast<chrono::milliseconds>(circleEnd - circleStart).count()) << endl;
-		
+
 		if (circles.size() > 0) {
 			if ((cvRound(circles[0][0]) > 0) && (cvRound(circles[0][1]) > 0))
 			{
 				circlesFound = true;
-				g_SelectedPoint = Point(cvRound(circles[0][0])/imgScale, cvRound(circles[0][1])/imgScale);
+				g_SelectedPoint = Point(cvRound(circles[0][0]), cvRound(circles[0][1]));
+				_Disparity.EstimateDepth(g_SelectedPoint, &DepthValue);
 
-				YPix = -(cvRound(circles[0][1])/imgScale - YMiddle);
-				XPix = cvRound(circles[0][0])/imgScale - XMiddle;
+				if (DepthValue > 0 && DepthValue < 10000)
+				{
+					if (prevDepth == 0)
+					{
+						prevDepth = static_cast<int>(DepthValue);
+					}
+				
+					depth = static_cast<int>(DepthValue) + 122;
+					prevDepth = static_cast<int>(DepthValue) + 122;
+					
+					YPix = -(cvRound(circles[0][1]) - YMiddle);
+					XPix = cvRound(circles[0][0]) - XMiddle;
 
-				scale = exp(log(DepthValue+122)*-0.9932 + 6.5735);
+					scale = exp(log(DepthValue + 122)*-0.9932 + 6.5735);
 
-				YDist = static_cast<int>(YPix / scale);
-				XDist = static_cast<int>(XPix / scale);
+					YDist = static_cast<int>(YPix / scale);
+					XDist = static_cast<int>(XPix / scale);
 
+
+					*X = XDist;
+					*Y = YDist;
+					*DEPTH = depth;
+					*foundCircle = 1;
+				}
 			}
 		}
 		else
 		{
 			circlesFound = false;
+			depth = prevDepth;
+			*foundCircle = 0;
 		}
 		
 	}

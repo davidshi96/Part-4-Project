@@ -15,8 +15,8 @@ class DepthViewer
 public:
 
 	void CameraStreaming();
-	void CircleDetection();
-	void DisparityCalculations(int *X, int *Y, int *DEPTH, int *foundCircle);
+	void CircleDetection(int *X, int *Y, int *DEPTH, int *foundCircle);
+	void DisparityCalculations();
 	void init();
 
 private:
@@ -48,6 +48,7 @@ private:
 
 	float imgScale = .6666667;
 
+	long frames = 0;
 
 	SOCKET clientSocket;
 
