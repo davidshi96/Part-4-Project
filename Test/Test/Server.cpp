@@ -63,27 +63,68 @@ void Server::initialiseServer()
 
 }
 
-void Server::sendData(int x, int y, int depth)
+void Server::sendData(int x, int y, int depth, int foundCircle)
 {
-	string X = to_string(x);
-	while (size(X) < 4)
+	/*
+	string X, Y, Z;
+	if (x < 0)
 	{
-		X.insert(0, 1, '0');
+		X = to_string(-x);
+		while (size(X) < 4)
+		{
+			X.insert(0, 1, '0');
+		}
+		X.insert(0, 1, '-');
+	}
+	else 
+	{
+		X = to_string(x);
+		while (size(X) < 4)
+		{
+			X.insert(0, 1, '0');
+		}
+		X.insert(0, 1, '+');
 	}
 	
-	string Y = to_string(y);
-	while (size(Y) < 4)
+	if (y < 0)
 	{
-		Y.insert(0, 1, '0');
+		Y = to_string(-y);
+		while (size(Y) < 4)
+		{
+			Y.insert(0, 1, '0');
+		}
+		Y.insert(0, 1, '-');
+	}
+	else
+	{
+		Y = to_string(y);
+		while (size(Y) < 4)
+		{
+			Y.insert(0, 1, '0');
+		}
+		Y.insert(0, 1, '+');
 	}
 
-	string DEPTH = to_string(depth);
-	while (size(DEPTH) < 4)
+	Z = to_string(depth);
+	while (size(Z) < 5)
 	{
-		DEPTH.insert(0, 1, '0');
+		Z.insert(0, 1, '0');
+	}
+	*/
+	string dataToSend;
+	if (x == 0 && y == 0 && depth == 0)
+	{
+		dataToSend = "0,0,-100,0\n";
+	}
+	else if (abs(x) > 9999 || abs(y) > 9999 || depth > 20000)
+	{
+		dataToSend = "invalid point \n";
+	}
+	else
+	{
+		dataToSend = to_string(x) + "," + to_string(y) + "," + to_string(depth) + "," + to_string(foundCircle) + "\n";
 	}
 
-	string dataToSend = X + "," + Y + "," + DEPTH + "\n";
 	if (clientSocket == 0)
 	{
 		cout << "failed to accept client connection" << endl;
