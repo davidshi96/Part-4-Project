@@ -60,6 +60,13 @@ using namespace cv::ximgproc;
 #define DISPARITY_OPTION 1 // 1 - Best Quality Depth Map and Lower Frame Rate - Stereo_SGBM 3 Way generic Left and Right 
 						   // 0 - Low  Quality Depth Map and High  Frame Rate - Stereo_BM generic Left and Right 
 
+//extern template class __declspec(dllimport) cv::Mat;
+//extern template class __declspec(dllimport) cv::Size;
+//extern template struct __declspec(dllimport) cv::Ptr<cv::StereoBM>;
+//extern template struct __declspec(dllimport) cv::Ptr<cv::StereoMatcher>;
+//extern template struct __declspec(dllimport) cv::Ptr<cv::StereoSGBM>;
+//extern template struct __declspec(dllimport) cv::Ptr<cv::ximgproc::DisparityWLSFilter>;
+
 namespace Tara
 {
 
@@ -68,6 +75,10 @@ void PrintDebug(BOOL bEnable, LPCTSTR szFormat,...);
 
 //Displays the Text on the image passed
 int DisplayText(cv::Mat Image, cv::String Text, cv::Point Location);
+
+
+
+
 
 class TARA_API TaraCamParameters
 {
