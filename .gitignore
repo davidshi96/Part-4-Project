@@ -34,3 +34,5 @@ Test/.vs/Test/v15/.suo
 *.pdb
 *.ilk
 *.pdb
+*.iobj
+*.ipdb
