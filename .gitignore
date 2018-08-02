@@ -28,13 +28,12 @@
 *.exe
 *.out
 *.app
-Test/.vs/Test/v15/.suo
 *.tlog
 *.idb
 *.pdb
 *.ilk
 *.pdb
-*.opendb
-*.ipch
-Test/.vs/Test/v15/.suo
-Test/.vs/Test/v15/Browse.VC.db
+Test/x64*
+Test/Test/x64*
+Test/.vs*
+UnityTest/Test/.vs*

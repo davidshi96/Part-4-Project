@@ -39,7 +39,7 @@ void DepthViewer::init()
 
 
 
-void DepthViewer::DisparityCalculations() 
+void DepthViewer::DisparityCalculations(unsigned long *frames) 
 {
 	/*
 	//setup for my own disparity filter
@@ -60,7 +60,8 @@ void DepthViewer::DisparityCalculations()
 	//Get disparity
 	if (_Disparity.GrabFrame(&LeftImage, &RightImage))
 	{
-
+		frame = *frames + 1;
+		*frames = frame;
 		//imshow("Left Image", LeftImage);
 		//imshow("Right Image", RightImage);
 
@@ -102,6 +103,7 @@ void DepthViewer::DisparityCalculations()
 			cv::circle(gDisparityMap_viz, g_SelectedPoint, 3, Scalar::all(0), 3, 8);
 			putText(gDisparityMap_viz, ss.str(), g_SelectedPoint, 2, 0.5, Scalar(0, 0, 0), 2, 8, false);
 		}
+		
 	}
 	cv::imshow("Disparity Map", gDisparityMap_viz);
 }
