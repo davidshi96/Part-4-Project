@@ -84,14 +84,17 @@ void DepthViewer::DisparityCalculations()
 
 		getDisparityVis(gDisparityMap, gDisparityMap_viz, 5.0);
 		*/
+		
 		if (XMiddle == 0 && YMiddle == 0)
 		{
 			XMiddle = gDisparityMap_viz.cols / 2;
 			YMiddle = gDisparityMap_viz.rows / 2;
 		}
+		/*
 		line(gDisparityMap_viz, Point(0, YMiddle), Point(gDisparityMap_viz.cols, YMiddle), Scalar(0, 0, 0), 1);
 		line(gDisparityMap_viz, Point(XMiddle, 0), Point(XMiddle, gDisparityMap_viz.rows), Scalar(0, 0, 0), 1);
 
+		*/
 		if (circlesFound)
 		{
 			stringstream ss;
@@ -120,7 +123,7 @@ void DepthViewer::CircleDetection(int *X, int *Y, int *DEPTH, int *foundCircle)
 		HoughCircles(imageToProcess, circles, CV_HOUGH_GRADIENT, 1, imageToProcess.cols, 100, 48); //static_cast<int>(10*imgScale), static_cast<int>(240*imgScale)
 
 		if (circles.size() > 0) {
-			if ((cvRound(circles[0][0]) > 0) && (cvRound(circles[0][1]) > 0))
+			if ((cvRound(circles[0][0]) > 160) && (cvRound(circles[0][1]) > 0))
 			{
 				circlesFound = true;
 				g_SelectedPoint = Point(cvRound(circles[0][0]), cvRound(circles[0][1]));

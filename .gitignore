@@ -34,3 +34,7 @@ Test/.vs/Test/v15/.suo
 *.pdb
 *.ilk
 *.pdb
+*.opendb
+*.ipch
+Test/.vs/Test/v15/.suo
+Test/.vs/Test/v15/Browse.VC.db
