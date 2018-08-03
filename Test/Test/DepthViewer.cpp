@@ -8,10 +8,6 @@
 #include "stdafx.h"
 #include "DepthViewer.h"
 
-//#define _HAS_ITERATOR_DEBUGGING 0
-
-
-
 
 //Local point to access the user selected value
 Point g_SelectedPoint(-1, -1);
@@ -25,7 +21,7 @@ void DepthViewer::init()
 
 	_Disparity.GrabFrame(&LeftImage, &RightImage);
 	//Window Creation
-	//namedWindow("Left Image", WINDOW_AUTOSIZE);
+	namedWindow("Left Image", WINDOW_AUTOSIZE);
 	//namedWindow("Right Image", WINDOW_AUTOSIZE);
 	namedWindow("Disparity Map", WINDOW_AUTOSIZE);
 	//setMouseCallback("Disparity Map", DepthPointSelection);
@@ -86,11 +82,7 @@ void DepthViewer::DisparityCalculations(unsigned long *frames)
 		getDisparityVis(gDisparityMap, gDisparityMap_viz, 5.0);
 		*/
 		
-		if (XMiddle == 0 && YMiddle == 0)
-		{
-			XMiddle = gDisparityMap_viz.cols / 2;
-			YMiddle = gDisparityMap_viz.rows / 2;
-		}
+
 		/*
 		line(gDisparityMap_viz, Point(0, YMiddle), Point(gDisparityMap_viz.cols, YMiddle), Scalar(0, 0, 0), 1);
 		line(gDisparityMap_viz, Point(XMiddle, 0), Point(XMiddle, gDisparityMap_viz.rows), Scalar(0, 0, 0), 1);
@@ -110,8 +102,15 @@ void DepthViewer::DisparityCalculations(unsigned long *frames)
 
 void DepthViewer::CircleDetection(int *X, int *Y, int *DEPTH, int *foundCircle)
 {
+	if (XMiddle == 0 && YMiddle == 0)
+	{
+		XMiddle = gDisparityMap_viz.cols / 2;
+		YMiddle = gDisparityMap_viz.rows / 2;
+	}
+	imshow("Left Image", LeftImage);
 	if (!LeftImage.empty() && !RightImage.empty())
 	{
+		
 		//GaussianBlur(LeftImage, imageToProcess, Size(9, 1), 2, 2);
 		//GaussianBlur(imageToProcess, imageToProcess, Size(1, 9), 2, 2);
 

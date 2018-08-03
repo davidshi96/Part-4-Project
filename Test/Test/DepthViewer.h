@@ -47,6 +47,4 @@ private:
 
 	float imgScale = .6666667;
 
-	SOCKET clientSocket;
-
 };
