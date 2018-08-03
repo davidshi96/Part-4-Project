@@ -33,8 +33,7 @@
 *.pdb
 *.ilk
 *.pdb
-
-Test/x64
-Test/Test/x64
-Test/.vs
-UnityTest/Test/.vs
+Test/x64*
+Test/Test/x64*
+Test/.vs*
+UnityTest/Test/.vs*
