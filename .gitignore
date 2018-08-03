@@ -28,9 +28,12 @@
 *.exe
 *.out
 *.app
-Test/.vs/Test/v15/.suo
 *.tlog
 *.idb
 *.pdb
 *.ilk
 *.pdb
+Test/x64*
+Test/Test/x64*
+Test/.vs*
+UnityTest/Test/.vs*
