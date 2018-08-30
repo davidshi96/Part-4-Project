@@ -31,6 +31,8 @@ private:
 	float DepthValue = 0;
 	int XMiddle = 0, YMiddle = 0;
 	bool circlesFound = false;
+	float radius = 0;
+	int pixRadius = 0;
 
 	//disparity calc
 	Mat LDisp, RDisp;

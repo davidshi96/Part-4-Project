@@ -28,6 +28,7 @@ public class PositionController : MonoBehaviour {
 
     LineRenderer Path;
 
+
     void Awake()
     {
         Path = GetComponent<LineRenderer>();
@@ -69,6 +70,8 @@ public class PositionController : MonoBehaviour {
 
                 // Calculates ball's position world position from its local position
                 worldPosition = cameraTransform.TransformPoint(cameraRelative);
+
+
 
                 // Set the ball's position to the calculated world position
                 transform.position = worldPosition;
