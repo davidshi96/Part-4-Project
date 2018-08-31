@@ -114,11 +114,11 @@ void Server::sendData(int x, int y, int depth, int foundCircle)
 	string dataToSend;
 	if (x == 0 && y == 0 && depth == 0)
 	{
-		dataToSend = "0,0,-1000,0\n";
+		dataToSend = "0,0,-100,0\n";
 	}
 	else if (abs(x) > 9999 || abs(y) > 9999 || depth > 20000)
 	{
-		dataToSend = "0,0,-1000,0\n";
+		dataToSend = "invalid point \n";
 	}
 	else
 	{

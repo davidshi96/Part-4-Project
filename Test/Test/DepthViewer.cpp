@@ -80,7 +80,10 @@ void DepthViewer::DisparityCalculations(unsigned long *frames)
 		wls_filter->filter(left_disp, LeftImage, gDisparityMap, right_disp);
 
 		getDisparityVis(gDisparityMap, gDisparityMap_viz, 5.0);
- 
+		*/
+		
+
+		/*
 		line(gDisparityMap_viz, Point(0, YMiddle), Point(gDisparityMap_viz.cols, YMiddle), Scalar(0, 0, 0), 1);
 		line(gDisparityMap_viz, Point(XMiddle, 0), Point(XMiddle, gDisparityMap_viz.rows), Scalar(0, 0, 0), 1);
 
@@ -89,8 +92,7 @@ void DepthViewer::DisparityCalculations(unsigned long *frames)
 		{
 			stringstream ss;
 			ss << "X = " + to_string(XDist) + " Y = " + to_string(YDist) + " depth = " + to_string(depth) << " mm\0";
-			//cv::circle(gDisparityMap_viz, g_SelectedPoint, 3, Scalar::all(0), 3, 8);
-			circle(gDisparityMap_viz, g_SelectedPoint, pixRadius, Scalar(0, 0, 255), 3, 8, 0);
+			cv::circle(gDisparityMap_viz, g_SelectedPoint, 3, Scalar::all(0), 3, 8);
 			putText(gDisparityMap_viz, ss.str(), g_SelectedPoint, 2, 0.5, Scalar(0, 0, 0), 2, 8, false);
 		}
 		
@@ -100,7 +102,6 @@ void DepthViewer::DisparityCalculations(unsigned long *frames)
 
 void DepthViewer::CircleDetection(int *X, int *Y, int *DEPTH, int *foundCircle)
 {
-	
 	if (XMiddle == 0 && YMiddle == 0)
 	{
 		XMiddle = gDisparityMap_viz.cols / 2;
@@ -110,58 +111,48 @@ void DepthViewer::CircleDetection(int *X, int *Y, int *DEPTH, int *foundCircle)
 	if (!LeftImage.empty() && !RightImage.empty())
 	{
 		
-		GaussianBlur(LeftImage, imageToProcess, Size(7, 7), 2, 2);
+		//GaussianBlur(LeftImage, imageToProcess, Size(9, 1), 2, 2);
+		//GaussianBlur(imageToProcess, imageToProcess, Size(1, 9), 2, 2);
 
-		//blur(LeftImage, imageToProcess, Size(3, 3), Point(-1, -1), BORDER_DEFAULT);
+		blur(LeftImage, imageToProcess, Size(3, 3), Point(-1, -1), BORDER_DEFAULT);
 		
 		circles.clear();
 		//scale image down
 		//cv::resize(LeftImage, imageToProcess, cv::Size(), imgScale, imgScale, INTER_CUBIC);
 
 		// Apply the Hough Transform to find the circles
-		HoughCircles(imageToProcess, circles, CV_HOUGH_GRADIENT, 1, imageToProcess.cols, 100, 50); //static_cast<int>(10*imgScale), static_cast<int>(240*imgScale)
+		HoughCircles(imageToProcess, circles, CV_HOUGH_GRADIENT, 1, imageToProcess.cols, 100, 48); //static_cast<int>(10*imgScale), static_cast<int>(240*imgScale)
 
-		if (circles.size() > 0) 
-		{
+		if (circles.size() > 0) {
 			if ((cvRound(circles[0][0]) > 160) && (cvRound(circles[0][1]) > 0))
 			{
 				circlesFound = true;
 				g_SelectedPoint = Point(cvRound(circles[0][0]), cvRound(circles[0][1]));
 				_Disparity.EstimateDepth(g_SelectedPoint, &DepthValue);
-				DepthValue = DepthValue * imgScale;
 
-				//once we have the depth value, we can then use that and the radius to find the actual diameter of the ball.
-
-				//getting the radius of the ball in pixels
-				pixRadius = cvRound(circles[0][2]);
-				//cout << "pixel radius = " + to_string(pixRadius) + "depth value = " + to_string(DepthValue) << endl;
-				//converting pixels to mm
-				//calculating actual radius using iterative feedback
-
-				radius = (0.0013*DepthValue + 0.0073)*pixRadius / (1 - 0.0013*pixRadius);
 				if (DepthValue > 0 && DepthValue < 10000)
 				{
 					if (prevDepth == 0)
 					{
-						prevDepth = static_cast<int>(DepthValue) + radius;
+						prevDepth = static_cast<int>(DepthValue);
 					}
 				
-					depth = static_cast<int>(DepthValue) + radius;
-					prevDepth = static_cast<int>(DepthValue) + radius;
+					depth = static_cast<int>(DepthValue) + 122;
+					prevDepth = static_cast<int>(DepthValue) + 122;
 					
 					YPix = -(cvRound(circles[0][1]) - YMiddle);
 					XPix = cvRound(circles[0][0]) - XMiddle;
 
-					scale = 0.0013*depth + 0.0073;
-					YDist = static_cast<int>(YPix * scale);
-					XDist = static_cast<int>(XPix * scale);
+					scale = exp(log(DepthValue + 122)*-0.9932 + 6.5735);
+
+					YDist = static_cast<int>(YPix / scale);
+					XDist = static_cast<int>(XPix / scale);
 
 
 					*X = XDist;
 					*Y = YDist;
 					*DEPTH = depth;
 					*foundCircle = 1;
-					
 				}
 			}
 		}
