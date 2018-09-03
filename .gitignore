@@ -37,3 +37,8 @@ Test/x64*
 Test/Test/x64*
 Test/.vs*
 UnityTest/Test/.vs*
+Test/Test/disparity.txt
+Test/Test/x64/Release/Test.log
+UnityTest/Test/Library/CurrentLayout.dwlt
+*.dwlt
+UnityTest/Test/Library/metadata/00/00000000000000006100000000000000
