@@ -35,7 +35,6 @@ public class PositionController : MonoBehaviour {
 
     LineRenderer Path;
 
-<<<<<<< HEAD
     UKF filterX = new UKF();
     UKF filterY = new UKF();
     UKF filterZ = new UKF();
@@ -47,8 +46,6 @@ public class PositionController : MonoBehaviour {
     List<double> measurementsZ = new List<double>();
     List<double> statesZ = new List<double>();
 
-=======
->>>>>>> parent of 3c23a4a... update 30/08/18
     void Awake()
     {
         
@@ -95,7 +92,6 @@ public class PositionController : MonoBehaviour {
                 // Calculates ball's position world position from its local position
                 worldPosition = cameraTransform.TransformPoint(cameraRelative);
 
-<<<<<<< HEAD
                 // Add world position into measurement lists for UKF
                 measurementsX.Add(worldPosition.x);
                 measurementsY.Add(worldPosition.y);
@@ -107,12 +103,6 @@ public class PositionController : MonoBehaviour {
                 filterX.Update(new[] { measurementsX[measurementsX.Count - 1] });
                 filterY.Update(new[] { measurementsX[measurementsY.Count - 1] });
                 filterZ.Update(new[] { measurementsX[measurementsZ.Count - 1] });
-=======
-                // Set the ball's position to the calculated world position
-                transform.position = worldPosition;
-            }
-        }
->>>>>>> parent of 3c23a4a... update 30/08/18
 
                 double cov = filterX.getCovariance()[0,0];
                 Debug.Log(Convert.ToString(cov) + "\n");
