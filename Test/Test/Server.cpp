@@ -63,7 +63,7 @@ void Server::initialiseServer()
 
 }
 
-void Server::sendData(int x, int y, int depth, int foundCircle)
+void Server::sendData(int x, int y, int depth, int foundCircle, int rad)
 {
 	/*
 	string X, Y, Z;
@@ -114,15 +114,15 @@ void Server::sendData(int x, int y, int depth, int foundCircle)
 	string dataToSend;
 	if (x == 0 && y == 0 && depth == 0)
 	{
-		dataToSend = "0,0,-1000,0\n";
+		dataToSend = "0,0,-1000,0,0\n";
 	}
 	else if (abs(x) > 9999 || abs(y) > 9999 || depth > 20000)
 	{
-		dataToSend = "0,0,-1000,0\n";
+		dataToSend = "0,0,-1000,0,0\n";
 	}
 	else
 	{
-		dataToSend = to_string(x) + "," + to_string(y) + "," + to_string(depth) + "," + to_string(foundCircle) + "\n";
+		dataToSend = to_string(x) + "," + to_string(y) + "," + to_string(depth) + "," + to_string(foundCircle) + "," + to_string(rad) + "\n";
 	}
 
 	if (clientSocket == 0)

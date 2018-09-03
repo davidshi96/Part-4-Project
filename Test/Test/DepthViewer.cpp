@@ -98,7 +98,7 @@ void DepthViewer::DisparityCalculations(unsigned long *frames)
 	cv::imshow("Disparity Map", gDisparityMap_viz);
 }
 
-void DepthViewer::CircleDetection(int *X, int *Y, int *DEPTH, int *foundCircle)
+void DepthViewer::CircleDetection(int *X, int *Y, int *DEPTH, int *foundCircle, int *rad)
 {
 	
 	if (XMiddle == 0 && YMiddle == 0)
@@ -110,44 +110,45 @@ void DepthViewer::CircleDetection(int *X, int *Y, int *DEPTH, int *foundCircle)
 	if (!LeftImage.empty() && !RightImage.empty())
 	{
 		
-		GaussianBlur(LeftImage, imageToProcess, Size(7, 7), 2, 2);
+		//GaussianBlur(LeftImage, imageToProcess, Size(5, 5), 2, 2);
 
 		//blur(LeftImage, imageToProcess, Size(3, 3), Point(-1, -1), BORDER_DEFAULT);
 		
 		circles.clear();
 		//scale image down
-		//cv::resize(LeftImage, imageToProcess, cv::Size(), imgScale, imgScale, INTER_CUBIC);
+		cv::resize(LeftImage, imageToProcess, cv::Size(), imgScale, imgScale, INTER_CUBIC);
 
 		// Apply the Hough Transform to find the circles
-		HoughCircles(imageToProcess, circles, CV_HOUGH_GRADIENT, 1, imageToProcess.cols, 100, 50); //static_cast<int>(10*imgScale), static_cast<int>(240*imgScale)
+		HoughCircles(imageToProcess, circles, CV_HOUGH_GRADIENT, 1, imageToProcess.cols, 120, 60); //static_cast<int>(10*imgScale), static_cast<int>(240*imgScale)
 
 		if (circles.size() > 0) 
 		{
-			if ((cvRound(circles[0][0]) > 160) && (cvRound(circles[0][1]) > 0))
+			if ((cvRound(circles[0][0]/ imgScale) > 160) && (cvRound(circles[0][1]/ imgScale) > 0))
 			{
 				circlesFound = true;
-				g_SelectedPoint = Point(cvRound(circles[0][0]), cvRound(circles[0][1]));
+				g_SelectedPoint = Point(cvRound(circles[0][0]/ imgScale), cvRound(circles[0][1]/ imgScale));
 				_Disparity.EstimateDepth(g_SelectedPoint, &DepthValue);
 				DepthValue = DepthValue * imgScale;
 
 				//once we have the depth value, we can then use that and the radius to find the actual diameter of the ball.
 
 				//getting the radius of the ball in pixels
-				pixRadius = cvRound(circles[0][2]);
+				pixRadius = cvRound(circles[0][2]/ imgScale);
 				//cout << "pixel radius = " + to_string(pixRadius) + "depth value = " + to_string(DepthValue) << endl;
 				//converting pixels to mm
 				//calculating actual radius using iterative feedback
 
-				radius = (0.0013*DepthValue + 0.0073)*pixRadius / (1 - 0.0013*pixRadius);
+				radius = (0.0013f*DepthValue + 0.0073f)*pixRadius / (1 - 0.0013f*pixRadius);
+
 				if (DepthValue > 0 && DepthValue < 10000)
 				{
 					if (prevDepth == 0)
 					{
-						prevDepth = static_cast<int>(DepthValue) + radius;
+						prevDepth = static_cast<int>(DepthValue) + static_cast<int>(radius);
 					}
 				
-					depth = static_cast<int>(DepthValue) + radius;
-					prevDepth = static_cast<int>(DepthValue) + radius;
+					depth = static_cast<int>(DepthValue) + static_cast<int>(radius);
+					prevDepth = static_cast<int>(DepthValue) + static_cast<int>(radius);
 					
 					YPix = -(cvRound(circles[0][1]) - YMiddle);
 					XPix = cvRound(circles[0][0]) - XMiddle;
@@ -161,6 +162,7 @@ void DepthViewer::CircleDetection(int *X, int *Y, int *DEPTH, int *foundCircle)
 					*Y = YDist;
 					*DEPTH = depth;
 					*foundCircle = 1;
+					*rad = static_cast<int>(radius);
 					
 				}
 			}

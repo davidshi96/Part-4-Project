@@ -15,7 +15,7 @@ class DepthViewer
 public:
 
 	void CameraStreaming();
-	void CircleDetection(int *X, int *Y, int *DEPTH, int *foundCircle);
+	void CircleDetection(int *X, int *Y, int *DEPTH, int *foundCircle, int *rad);
 	void DisparityCalculations(unsigned long *frames);
 	void init();
 
@@ -47,6 +47,6 @@ private:
 	int XPix = 0;
 	int YPix = 0;
 
-	float imgScale = .6666667;
+	float imgScale = .6666667f;
 
 };

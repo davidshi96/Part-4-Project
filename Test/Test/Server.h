@@ -10,7 +10,7 @@ class Server
 {
 public:
 	void initialiseServer();
-	void sendData(int x, int y, int depth, int foundCircle);
+	void sendData(int x, int y, int depth, int foundCircle, int rad);
 	void closeServer();
 private:
 

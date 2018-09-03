@@ -1,4 +1,4 @@
-﻿  Test.cpp
+﻿  DepthViewer.cpp
 d:\david & tanmay\github\part-4-project\test\test\tara.h(87): warning C4251: 'Tara::TaraCamParameters::Q': class 'cv::Mat' needs to have dll-interface to be used by clients of class 'Tara::TaraCamParameters'
   d:\opencv\opencv\build\include\opencv2\core\mat.hpp(772): note: see declaration of 'cv::Mat'
 d:\david & tanmay\github\part-4-project\test\test\tara.h(107): warning C4251: 'Tara::TaraCamParameters::M1': class 'cv::Mat' needs to have dll-interface to be used by clients of class 'Tara::TaraCamParameters'
@@ -79,6 +79,8 @@ d:\david & tanmay\github\part-4-project\test\test\tara.h(243): warning C4251: 'T
           [
               _Ty=cv::Size
           ]
-d:\david & tanmay\github\part-4-project\test\test\depthviewer.h(50): warning C4305: 'initializing': truncation from 'double' to 'float'
+  Generating Code...
+  Skipping... (no relevant changes detected)
+  Test.cpp
   Test.vcxproj -> D:\David & Tanmay\github\Part-4-Project\Test\x64\Debug\Test.exe
   Test.vcxproj -> D:\David & Tanmay\github\Part-4-Project\Test\x64\Debug\Test.pdb (Partial PDB)
