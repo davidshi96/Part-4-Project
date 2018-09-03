@@ -207,18 +207,14 @@ using System.IO;
 using System.Net.Sockets;
 using System.Linq;
 
-
 [RequireComponent(typeof(LineRenderer))]
 public class PositionController : MonoBehaviour
 {
-
-    
 
     //Remember to drag the camera to this field in the inspector
     public Transform cameraTransform;
     public Vector3 cameraRelative;
     public Vector3 worldPosition;
-    public Vector3 filteredPosition;
 
     public int resolution = 5;
 
@@ -234,16 +230,9 @@ public class PositionController : MonoBehaviour
 
     LineRenderer Path;
 
-    public UKF filter = new UKF();
-
-    Vector3 Acceleration;
-    Vector3 Velocity;
-    float interval = 0.1f;
-
     void Awake()
     {
         Path = GetComponent<LineRenderer>();
-        filter = GetComponent<UKF>();
         try
         {
             tcp_socket = new TcpClient(host, port);
@@ -283,20 +272,8 @@ public class PositionController : MonoBehaviour
                 // Calculates ball's position world position from its local position
                 worldPosition = cameraTransform.TransformPoint(cameraRelative);
 
-                //Debug.Log(Convert.ToString(worldPosition.x) + " , " + Convert.ToString(worldPosition.y) + " , " + Convert.ToString(worldPosition.z) + "\n");
-
-                // Enter the noisy world position into the Unscented Kalman Filter
-                filter.UpdateFilter(worldPosition, Velocity, Acceleration, interval);
-
-                // Obtain filtered world position
-                filteredPosition.x = Convert.ToSingle(filter.getState()[0]);
-                filteredPosition.y = Convert.ToSingle(filter.getState()[1]);
-                filteredPosition.z = Convert.ToSingle(filter.getState()[2]);
-
-                Debug.Log(Convert.ToString(filteredPosition.x) + " , " + Convert.ToString(filteredPosition.y) + " , " + Convert.ToString(filteredPosition.z) + "\n");
-
-                // Set the ball's position to the filtered world position
-                transform.position = filteredPosition;
+                // Set the ball's position to the calculated world position
+                transform.position = worldPosition;
             }
         }
     }
@@ -325,9 +302,11 @@ public class PositionController : MonoBehaviour
 
     private IEnumerator Prediction()
     {
-        
+        float interval = 0.1f;
+        Vector3 Acceleration;
         Vector3 position1;
         Vector3 position2;
+        Vector3 Velocity;
         Vector3 NextPosition;
         Vector3 NextVelocity;
 

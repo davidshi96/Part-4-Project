@@ -330,7 +330,6 @@ GameObject:
   - component: {fileID: 1731047301}
   - component: {fileID: 1731047302}
   - component: {fileID: 1731047303}
-  - component: {fileID: 1731047304}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -416,7 +415,6 @@ MonoBehaviour:
   cameraTransform: {fileID: 1983351722}
   cameraRelative: {x: 0, y: 0, z: 0}
   worldPosition: {x: 0, y: 0, z: 0}
-  filteredPosition: {x: 0, y: 0, z: 0}
   resolution: 5
   host: localhost
   port: 54000
@@ -532,17 +530,6 @@ LineRenderer:
     textureMode: 0
   m_UseWorldSpace: 1
   m_Loop: 0
---- !u!114 &1731047304
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1731047295}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5a00a74c26ce8546ae122e8aab9c385, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1983351722 stripped
 Transform:
   m_PrefabParentObject: {fileID: 429506, guid: dc06161b6d97feb419f45f03b62e14b9, type: 2}
