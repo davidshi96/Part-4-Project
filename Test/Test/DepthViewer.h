@@ -47,6 +47,6 @@ private:
 	int XPix = 0;
 	int YPix = 0;
 
-	float imgScale = .6666667f;
+	float imgScale = .6666666667f;
 
 };

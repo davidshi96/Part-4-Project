@@ -201,9 +201,9 @@ public class UKF : MonoBehaviour {
             NextPosition = position + T * V + 0.5f * A * T * T;
             //sets rows_in_x to be equal to each sigma point 
             row_in_X = Matrix.Build.Dense(m, 1, 0);
-            row_in_X[0, 0] = NextPosition.x;
-            row_in_X[1, 0] = NextPosition.y;
-            row_in_X[2, 0] = NextPosition.z;
+            row_in_X[0, 0] = position.x;
+            row_in_X[1, 0] = position.y;
+            row_in_X[2, 0] = position.z;
             Y.SetSubMatrix(0, Y.RowCount, k, 1, row_in_X);
             y = y.Add(Y.SubMatrix(0, Y.RowCount, k, 1).Multiply(Wm[0, k]));
         }

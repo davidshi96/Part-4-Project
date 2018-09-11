@@ -1,4 +1,4 @@
-﻿  DepthViewer.cpp
+﻿  Test.cpp
 d:\david & tanmay\github\part-4-project\test\test\Tara.h(87): warning C4251: 'Tara::TaraCamParameters::Q': class 'cv::Mat' needs to have dll-interface to be used by clients of class 'Tara::TaraCamParameters'
   D:\OpenCV\opencv\build\include\opencv2/core/mat.hpp(772): note: see declaration of 'cv::Mat'
 d:\david & tanmay\github\part-4-project\test\test\Tara.h(107): warning C4251: 'Tara::TaraCamParameters::M1': class 'cv::Mat' needs to have dll-interface to be used by clients of class 'Tara::TaraCamParameters'
@@ -80,9 +80,9 @@ d:\david & tanmay\github\part-4-project\test\test\Tara.h(243): warning C4251: 'T
               _Ty=cv::Size
           ]
   Generating code
-  1 of 359 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
+  2 of 352 functions ( 0.6%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    29 functions had inline decision re-evaluated but remain unchanged
+    7 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Test.vcxproj -> D:\David & Tanmay\github\Part-4-Project\Test\x64\Release\Test.exe
   Test.vcxproj -> D:\David & Tanmay\github\Part-4-Project\Test\x64\Release\Test.pdb (Full PDB)
