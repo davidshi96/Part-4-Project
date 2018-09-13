@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using System;
 using System.IO;
 using System.Net.Sockets;
@@ -63,6 +64,10 @@ public class PositionController : MonoBehaviour
     bool previouslyDetected;
     bool previouslyPredicted;
 
+    //Write some text to the test.txt file
+    StreamWriter writer1;
+    StreamWriter writer2;
+
     void Awake()
     {
         Path = GetComponent<LineRenderer>();
@@ -89,7 +94,19 @@ public class PositionController : MonoBehaviour
         ball.isKinematic = true;
         previouslyDetected = false;
         //StartCoroutine("Prediction");
+
+        if (File.Exists(Application.dataPath + "/prefiltered.txt"))
+        {
+            writer1 = new StreamWriter(Application.dataPath + "/prefiltered.txt", append: true);
+        }
+
+        if (File.Exists(Application.dataPath + "/filtered.txt"))
+        {
+            writer2 = new StreamWriter(Application.dataPath + "/filtered.txt", append: true);
+        }
+
         UnityEngine.Debug.Log("start position: " + Convert.ToString(transform.position.x) + ", " + Convert.ToString(transform.position.y) + ", " + Convert.ToString(transform.position.z));
+
     }
 
     void Update()
@@ -143,8 +160,9 @@ public class PositionController : MonoBehaviour
 
                 // Calculates ball's position world position from its local position
                 worldPosition = cameraTransform.TransformPoint(cameraRelative);
-                UnityEngine.Debug.Log("World: " + Convert.ToString(worldPosition.x) + ", " + Convert.ToString(worldPosition.y) + ", " + Convert.ToString(worldPosition.z));
-
+                //UnityEngine.Debug.Log("World: " + Convert.ToString(worldPosition.x) + ", " + Convert.ToString(worldPosition.y) + ", " + Convert.ToString(worldPosition.z));
+                writer1.WriteLine(Convert.ToString(worldPosition.x));
+                
                 // Enter the noisy world position into the Unscented Kalman Filter
                 filter.UpdateFilter(worldPosition, Velocity, Acceleration, step);
 
@@ -152,7 +170,7 @@ public class PositionController : MonoBehaviour
                 filteredPosition.x = Convert.ToSingle(filter.getState()[0]);
                 filteredPosition.y = Convert.ToSingle(filter.getState()[1]);
                 filteredPosition.z = Convert.ToSingle(filter.getState()[2]);
-
+                writer2.WriteLine(Convert.ToString(filteredPosition.x));
                 //Debug.Log("Filtered: " + Convert.ToString(filteredPosition.x) + ", " + Convert.ToString(filteredPosition.y) + ", " + Convert.ToString(filteredPosition.z));
 
                 TempVelocity = (filteredPosition - previousPosition) / step;
@@ -241,6 +259,8 @@ public class PositionController : MonoBehaviour
         socket_reader.Close();
         tcp_socket.Close();
         socket_ready = false;
+        writer1.Close();
+        writer2.Close();
     }
 
     public String ReadSocket()
