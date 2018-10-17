@@ -22,8 +22,8 @@ public class PositionController : MonoBehaviour
 
     float D = 1.225f * 0.5f * 3.1415f * 0.09725f * 0.09725f / 2f;   // Using average radius of all 4 balls
     float mass = 0.0837f;
-    public float step;
-    public float step2;
+    float step = 1.0f;
+    float step2 = 1.0f;
     int count = 0;
 
     public int resolution = 5;
@@ -43,14 +43,14 @@ public class PositionController : MonoBehaviour
     List<float> position;
     public UKF filter;
 
-    Vector3 Acceleration;
-    Vector3 Velocity;
+    Vector3 Acceleration = new Vector3(0.0f, 0.0f, 0.0f);
+    Vector3 Velocity = new Vector3(0.0f, 0.0f, 0.0f);
     Vector3 Predict;
     Vector3 upperLimit;
     Vector3 lowerLimit;
     Vector3 TempVelocity;
     Vector3 Force;
-    Vector3[] ProjectilePath = new Vector3[1];
+    Vector3[] ProjectilePath = new Vector3[5];
     float interval = 0.1f;
     float oldSize = 0.243f;
 
@@ -147,6 +147,8 @@ public class PositionController : MonoBehaviour
                     float newSize = 2f * position[4] / 1000f;
                     transform.localScale = new Vector3(newSize, newSize, newSize);
                     oldSize = newSize;
+                    D = 1.225f * 0.5f * 3.1415f * (newSize/2) * (newSize / 2) / 2f;
+                    //UnityEngine.Debug.Log(Convert.ToString(position[4]) + "," + Convert.ToString(transform.localScale.x) + "\n");
                 }
 
                 // Vector of ball's position relative to the camera
