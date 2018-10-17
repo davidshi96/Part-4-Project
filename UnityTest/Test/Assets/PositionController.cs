@@ -137,7 +137,7 @@ public class PositionController : MonoBehaviour
                 count = 0;
                 ball.isKinematic = true;
 
-                previousPosition = transform.position;
+                previousPosition = GetComponent<Rigidbody>().position;
 
                 // Updating size of ball
                 upperLimit = new Vector3(oldSize * 1.3f, oldSize * 1.3f, oldSize * 1.3f);
@@ -161,6 +161,7 @@ public class PositionController : MonoBehaviour
                 writer1.WriteLine(Convert.ToString(worldPosition.x));
                 
                 // Enter the noisy world position into the Unscented Kalman Filter
+
                 filter.UpdateFilter(worldPosition, Velocity, Acceleration, step);
 
                 // Obtain filtered world position

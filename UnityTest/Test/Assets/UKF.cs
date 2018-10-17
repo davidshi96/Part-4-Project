@@ -102,7 +102,7 @@ public class UKF : MonoBehaviour {
         //unscented transformation of process
         // X1=sigmas(x1,P1,c) - sigma points around x1
         //X2=X1-x1(:,ones(1,size(X1,2))) - deviation of X1
-        Matrix<double>[] ut_f_matrices = UnscentedTransform(X, V,A , T, Wm, Wc, L, Q);
+        Matrix<double>[] ut_f_matrices = UnscentedTransform(X, V, A, T, Wm, Wc, L, Q);
         Matrix<double> x1 = ut_f_matrices[0];
         Matrix<double> X1 = ut_f_matrices[1];
         Matrix<double> P1 = ut_f_matrices[2];
@@ -154,12 +154,22 @@ public class UKF : MonoBehaviour {
             position.y = (float)X[1, k];
             position.z = (float)X[2, k];
             //need to the pass each row into the function f
-            NextPosition = position + T * V + 0.5f * A * T * T;
+            NextPosition = position + T * V + 0.5f * (A - Physics.gravity) * T * T;
             //sets rows_in_x to be equal to each sigma point 
             row_in_X = Matrix.Build.Dense(m, 1, 0);
-            row_in_X[0, 0] = position.x;
-            row_in_X[1, 0] = position.y;
-            row_in_X[2, 0] = position.z;
+            if (NextPosition.y < 0)
+            {
+                row_in_X[0, 0] = position.x;
+                row_in_X[1, 0] = position.y;
+                row_in_X[2, 0] = position.z;
+            }
+            else
+            {
+                row_in_X[0, 0] = NextPosition.x;
+                row_in_X[1, 0] = NextPosition.y;
+                row_in_X[2, 0] = NextPosition.z;
+            }
+            
             Y.SetSubMatrix(0, Y.RowCount, k, 1, row_in_X);
             y = y.Add(Y.SubMatrix(0, Y.RowCount, k, 1).Multiply(Wm[0, k]));
         }
