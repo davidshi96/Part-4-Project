@@ -6,87 +6,52 @@ using UnityEngine;
 
 public class UKF : MonoBehaviour {
 
-
-    /// <summary>
-    /// Number of States
-    /// </summary>
+    // Number of States
     private int L;
 
-    /// <summary>
-    /// Measurements number
-    /// </summary>
+    // Measurements number
     private int m;
 
-    /// <summary>
-    /// The alpha coefficient, characterize sigma-points dispersion around mean
-    /// </summary>
+    // The alpha coefficient, characterize sigma-points dispersion around mean
     private double alpha;
 
-    /// <summary>
-    /// The ki.
-    /// </summary>
+    // The ki
     private double ki;
 
-    /// <summary>
-    /// The beta coefficient, characterize type of distribution (2 for normal one) 
-    /// </summary>
+    // The beta coefficient, characterize type of distribution (2 for normal one) 
     private double beta;
 
-    /// <summary>
-    /// Scale factor
-    /// </summary>
+    // Scale factor
     private double lambda;
 
-    /// <summary>
-    /// Scale factor
-    /// </summary>
+    // Scale factor
     private double c;
 
-    /// <summary>
-    /// Means weights
-    /// </summary>
+    // Means weights
     private Matrix<double> Wm;
 
-    /// <summary>
-    /// Covariance weights
-    /// </summary>
+    // Covariance weights
     private Matrix<double> Wc;
-
-    /// <summary>
-	/// State
-	/// </summary>
+    
+	// State
     private Matrix<double> x;
 
-    /// <summary>
-	/// Covariance
-	/// </summary>
+    // Covariance
     private Matrix<double> P;
 
-    /// <summary>
-	/// Std of process 
-	/// </summary>
+	// Std of process
     private double q;
 
-    /// <summary>
-	/// Std of measurement 
-	/// </summary>
+	// Std of measurement
     private double r;
 
-    /// <summary>
-	/// Covariance of process
-	/// </summary>
+	// Covariance of process
     private Matrix<double> Q;
 
-    /// <summary>
-	/// Covariance of measurement 
-	/// </summary>
+	// Covariance of measurement 
     private Matrix<double> R;
 
-    /// <summary>
-    /// Constructor of Unscented Kalman Filter
-    /// </summary>
-    /// <param name="L">States number</param>
-    /// <param name="m">Measurements number</param>
+    // Constructor of Unscented Kalman Filter
     public UKF()
     {
         L = 3;
@@ -171,16 +136,7 @@ public class UKF : MonoBehaviour {
         return P.ToArray();
     }
 
-    /// <summary>
-    /// Unscented Transformation
-    /// </summary>
-    /// <param name="f">nonlinear map</param>
-    /// <param name="X">sigma points</param>
-    /// <param name="Wm">Weights for means</param>
-    /// <param name="Wc">Weights for covariance</param>
-    /// <param name="n">numer of outputs of f</param>
-    /// <param name="R">additive covariance</param>
-    /// <returns>[transformed mean, transformed smapling points, transformed covariance, transformed deviations</returns>
+    // Unscented Transformation: returns the transformed mean, transformed sampling points, transformed covariance, and transformed deviations
     private Matrix<double>[] UnscentedTransform(Matrix<double> X,
         Vector3 V, Vector3 A, float T, Matrix<double> Wm, Matrix<double> Wc, int n, Matrix<double> R)
     {
@@ -217,15 +173,10 @@ public class UKF : MonoBehaviour {
         return output;
     }
 
-    /// <summary>
-    /// Sigma points around reference point
-    /// </summary>
-    /// <param name="x">reference point</param>
-    /// <param name="P">covariance</param>
-    /// <param name="c">coefficient</param>
-    /// <returns>Sigma points</returns>
+    // Returns sigma points around reference point
     private Matrix<double> GetSigmaPoints(Matrix<double> x, Matrix<double> P, double c)
     {
+        // Cholesky decomposition is alternative to square root
         Matrix<double> A = P.Cholesky().Factor;
 
         A = A.Multiply(c);

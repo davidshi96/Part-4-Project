@@ -37,22 +37,6 @@ void DepthViewer::init()
 
 void DepthViewer::DisparityCalculations(unsigned long *frames) 
 {
-	/*
-	//setup for my own disparity filter
-	cv::Ptr<cv::StereoBM> bm_left;
-	cv::Ptr<cv::StereoMatcher> bm_right;
-	cv::Ptr<cv::ximgproc::DisparityWLSFilter> wls_filter;
-
-	cv::Mat left_disp, right_disp;
-	cv::Mat LeftScaleImage, RightScaleImage;
-	cv::Mat filtered_disp, raw_disp_vis, filtered_disp_vis;
-
-	bm_left = StereoBM::create(16, 15);
-	wls_filter = createDisparityWLSFilter(bm_left);
-	bm_right = StereoBM::create(16, 15);
-	
-	*/
-
 	//Get disparity
 	if (_Disparity.GrabFrame(&LeftImage, &RightImage))
 	{
@@ -65,25 +49,7 @@ void DepthViewer::DisparityCalculations(unsigned long *frames)
 		cv::resize(LeftImage, LDisp, cv::Size(), imgScale, imgScale);
 		cv::resize(RightImage, RDisp, cv::Size(), imgScale, imgScale);
 		_Disparity.GetDisparity(LDisp, RDisp, &gDisparityMap, &gDisparityMap_viz);
-		/*
-		//resizing image
-		resize(LeftImage, LeftScaleImage, cv::Size(), 0.25, 0.25, INTER_AREA);
-		resize(RightImage, RightScaleImage, cv::Size(), 0.25, 0.25, INTER_AREA);
 
-		//performing matching
-		bm_left->compute(LeftScaleImage, RightScaleImage, left_disp);
-		bm_right->compute(RightScaleImage, LeftScaleImage, right_disp);
-
-		//performing filtering
-		wls_filter->setLambda(8000.00);
-		wls_filter->setSigmaColor(1.5);
-		wls_filter->filter(left_disp, LeftImage, gDisparityMap, right_disp);
-
-		getDisparityVis(gDisparityMap, gDisparityMap_viz, 5.0);
- 
-		
-
-		*/
 		line(gDisparityMap_viz, Point(0, YMiddle), Point(gDisparityMap_viz.cols, YMiddle), Scalar(0, 0, 0), 1);
 		line(gDisparityMap_viz, Point(XMiddle, 0), Point(XMiddle, gDisparityMap_viz.rows), Scalar(0, 0, 0), 1);
 		if (circlesFound)
@@ -114,9 +80,9 @@ void DepthViewer::CircleDetection(int *X, int *Y, int *DEPTH, int *foundCircle, 
 	{
 		float detectionScale = 1.0;
 		
-		//GaussianBlur(LeftImage, imageToProcess, Size(5, 5), 2, 2);
+		GaussianBlur(LeftImage, imageToProcess, Size(5, 5), 2, 2);
 
-		blur(LeftImage, imageToProcess, Size(3, 3), Point(-1, -1), BORDER_DEFAULT);
+		//blur(LeftImage, imageToProcess, Size(3, 3), Point(-1, -1), BORDER_DEFAULT);
 		
 		circles.clear();
 		//scale image down

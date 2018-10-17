@@ -3,7 +3,6 @@
 
 void Server::initialiseServer()
 {
-
 	// Initialze winsock
 	WSADATA wsData;
 	WORD ver = MAKEWORD(2, 2);
@@ -111,7 +110,9 @@ void Server::sendData(int x, int y, int depth, int foundCircle, int rad)
 		Z.insert(0, 1, '0');
 	}
 	*/
+
 	string dataToSend;
+	
 	if (x == 0 && y == 0 && depth == 0)
 	{
 		dataToSend = "0,0,-1000,0,0\n";
@@ -124,7 +125,7 @@ void Server::sendData(int x, int y, int depth, int foundCircle, int rad)
 	{
 		dataToSend = to_string(x) + "," + to_string(y) + "," + to_string(depth) + "," + to_string(foundCircle) + "," + to_string(rad) + "\n";
 	}
-
+	
 	if (clientSocket == 0)
 	{
 		cout << "failed to accept client connection" << endl;
@@ -132,6 +133,7 @@ void Server::sendData(int x, int y, int depth, int foundCircle, int rad)
 	else
 	{
 		send(clientSocket, dataToSend.c_str(), dataToSend.size(), 0); // Send the string 
+		
 	}
 }
 

@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 using System;
 using System.IO;
 using System.Net.Sockets;
@@ -27,7 +26,7 @@ public class PositionController : MonoBehaviour
     public float step2;
     int count = 0;
 
-    public int resolution = 1;
+    public int resolution = 5;
 
     public String host = "localhost";
     public Int32 port = 54000;
@@ -42,13 +41,10 @@ public class PositionController : MonoBehaviour
     LineRenderer Path;
 
     List<float> position;
-    //UKF filter = PositionController.AddComponent<filter>();
     public UKF filter;
 
     Vector3 Acceleration;
     Vector3 Velocity;
-    Vector3 NextVelocity;
-    Vector3 NextPosition;
     Vector3 Predict;
     Vector3 upperLimit;
     Vector3 lowerLimit;
@@ -58,8 +54,9 @@ public class PositionController : MonoBehaviour
     float interval = 0.1f;
     float oldSize = 0.243f;
 
-    Stopwatch time = new Stopwatch();
-    Stopwatch time2 = new Stopwatch();
+    // Stopwatches to measure frame rate 
+    Stopwatch time = new Stopwatch(); // Frame rate when ball is detected
+    Stopwatch time2 = new Stopwatch(); // Frame rate when ball is not detected
 
     bool previouslyDetected;
     bool previouslyPredicted;
@@ -93,8 +90,9 @@ public class PositionController : MonoBehaviour
         ball.useGravity = true;
         ball.isKinematic = true;
         previouslyDetected = false;
-        //StartCoroutine("Prediction");
+        StartCoroutine("Prediction");
 
+        // ----- WRITING DATA INTO TEXT FILES -----
         if (File.Exists(Application.dataPath + "/prefiltered.txt"))
         {
             writer1 = new StreamWriter(Application.dataPath + "/prefiltered.txt", append: true);
@@ -104,23 +102,22 @@ public class PositionController : MonoBehaviour
         {
             writer2 = new StreamWriter(Application.dataPath + "/filtered.txt", append: true);
         }
-
-        UnityEngine.Debug.Log("start position: " + Convert.ToString(transform.position.x) + ", " + Convert.ToString(transform.position.y) + ", " + Convert.ToString(transform.position.z));
-
     }
 
     void Update()
     {
-
+        // Read data from socket connection
         string received_data = ReadSocket();
         
         if (received_data != "")
         {
-            // convert string into 3 floats
+            // convert string into floats
             position = received_data.Split(',').Select(float.Parse).ToList();
 
+            // If ball has been detected
             if (position[3] == 1)
             {
+                // Start timer for ball detection, end timer for ball prediction
                 previouslyPredicted = false;
                 time2.Reset();
 
@@ -132,8 +129,7 @@ public class PositionController : MonoBehaviour
                 else
                 {
                     time.Stop();
-                    step = Convert.ToSingle(time.Elapsed.TotalMilliseconds)/1000f;
-                    //UnityEngine.Debug.Log("Step: " + Convert.ToString(time.Elapsed.TotalMilliseconds) + "ms");
+                    step = Convert.ToSingle(time.Elapsed.TotalMilliseconds)/1000f; // record time step for the frame
                     time.Reset();
                     time.Start();
                 }
@@ -143,14 +139,14 @@ public class PositionController : MonoBehaviour
 
                 previousPosition = transform.position;
 
-                upperLimit = new Vector3(oldSize * 1.2f, oldSize * 1.2f, oldSize * 1.2f);
-                lowerLimit = new Vector3(oldSize * .8f, oldSize * .8f, oldSize * .8f);
+                // Updating size of ball
+                upperLimit = new Vector3(oldSize * 1.3f, oldSize * 1.3f, oldSize * 1.3f);
+                lowerLimit = new Vector3(oldSize * .7f, oldSize * .7f, oldSize * .7f);
                 if (position[4] != 0 && transform.localScale.sqrMagnitude < upperLimit.sqrMagnitude && transform.localScale.sqrMagnitude > lowerLimit.sqrMagnitude)
                 {
                     float newSize = 2f * position[4] / 1000f;
                     transform.localScale = new Vector3(newSize, newSize, newSize);
                     oldSize = newSize;
-                    //UnityEngine.Debug.Log(Convert.ToString(position[4]) + "," + Convert.ToString(transform.localScale.x) + "\n");
                 }
 
                 // Vector of ball's position relative to the camera
@@ -160,7 +156,6 @@ public class PositionController : MonoBehaviour
 
                 // Calculates ball's position world position from its local position
                 worldPosition = cameraTransform.TransformPoint(cameraRelative);
-                //UnityEngine.Debug.Log("World: " + Convert.ToString(worldPosition.x) + ", " + Convert.ToString(worldPosition.y) + ", " + Convert.ToString(worldPosition.z));
                 writer1.WriteLine(Convert.ToString(worldPosition.x));
                 
                 // Enter the noisy world position into the Unscented Kalman Filter
@@ -171,9 +166,11 @@ public class PositionController : MonoBehaviour
                 filteredPosition.y = Convert.ToSingle(filter.getState()[1]);
                 filteredPosition.z = Convert.ToSingle(filter.getState()[2]);
                 writer2.WriteLine(Convert.ToString(filteredPosition.x));
-                //Debug.Log("Filtered: " + Convert.ToString(filteredPosition.x) + ", " + Convert.ToString(filteredPosition.y) + ", " + Convert.ToString(filteredPosition.z));
-
+                
+                // Calculating temporary velocity value
                 TempVelocity = (filteredPosition - previousPosition) / step;
+
+                // Making sure temp velocity value is not a false reading (too high) before setting it to ball velocity
                 if (TempVelocity.magnitude < 10)
                 {
                     Velocity = TempVelocity;
@@ -181,11 +178,11 @@ public class PositionController : MonoBehaviour
                     Acceleration = -Vector3.Scale(Velocity, Velocity) * D / mass + Physics.gravity;
                 }
 
-                UnityEngine.Debug.Log("Velocity: " + Convert.ToString(Velocity.x) + ", " + Convert.ToString(Velocity.y) + ", " + Convert.ToString(Velocity.z));
-
-                UnityEngine.Debug.Log("Acceleration: " + Convert.ToString(Acceleration.x) + ", " + Convert.ToString(Acceleration.y) + ", " + Convert.ToString(Acceleration.z));
+                // Set ball's position to filtered position
                 ball.MovePosition(filteredPosition);
             }
+
+            // If ball has not been detected
             else if (position[3] == 0)
             {
                 previouslyDetected = false;
@@ -200,55 +197,25 @@ public class PositionController : MonoBehaviour
                 {
                     time2.Stop();
                     step2 = Convert.ToSingle(time2.Elapsed.TotalMilliseconds) / 1000f;
-                    //UnityEngine.Debug.Log("Step: " + Convert.ToString(time2.Elapsed.TotalMilliseconds) + "ms");
                     time2.Reset();
                     time2.Start();
                 }
 
                 count++;
-                //Debug.Log(Convert.ToString(count));
-                //Debug.Log(Convert.ToString(ball.isKinematic));
 
-                // Wait 3 frames 
+                // Wait 3 frames to ensure ball has left camera FOV and not just skipped detection
                 if (count == 2)
-                {
-                    //Predict = filteredPosition + 0.011f * Velocity + 0.5f * Acceleration * 0.011f * 0.011f;
-                    ////update velocity and acceleration
-                    //filter.UpdateFilter(Predict, Velocity, Acceleration, step);
-                    //filteredPosition.x = Convert.ToSingle(filter.getState()[0]);
-                    //filteredPosition.y = Convert.ToSingle(filter.getState()[1]);
-                    //filteredPosition.z = Convert.ToSingle(filter.getState()[2]);
-                    //UnityEngine.Debug.Log("Predicted position: " + Convert.ToString(Predict.x) + ", " + Convert.ToString(Predict.y) + ", " + Convert.ToString(Predict.z));
-                    //UnityEngine.Debug.Log("Velocity: " + Convert.ToString(Velocity.x) + ", " + Convert.ToString(Velocity.y) + ", " + Convert.ToString(Velocity.z));
-                    //UnityEngine.Debug.Log("Acceleration: " + Convert.ToString(Acceleration.x) + ", " + Convert.ToString(Acceleration.y) + ", " + Convert.ToString(Acceleration.z));
-
-                    //ball.useGravity = true;
-                    
-
+                {                 
                     TempVelocity += Acceleration * step2;
                     Acceleration = -Vector3.Scale(TempVelocity, TempVelocity) * D / mass + Physics.gravity;
-                    UnityEngine.Debug.Log("Predicted Acc: " + Convert.ToString(Acceleration.x) + ", " + Convert.ToString(Acceleration.y) + ", " + Convert.ToString(Acceleration.z));
-                    ball.velocity = TempVelocity;
-                    UnityEngine.Debug.Log("Predicted Velocity: " + Convert.ToString(ball.velocity.x) + ", " + Convert.ToString(ball.velocity.y) + ", " + Convert.ToString(ball.velocity.z));
+                    if (TempVelocity.magnitude < 1000)
+                    {
+                        ball.velocity = TempVelocity;
+                    }
                     ball.isKinematic = false;
-                    //Force = -Vector3.Scale(TempVelocity, TempVelocity) * D;
-                    //UnityEngine.Debug.Log("Force: " + Convert.ToString(Force.x) + ", " + Convert.ToString(Force.y) + ", " + Convert.ToString(Force.z));
-                    //ball.AddForce(Force, ForceMode.Impulse);
-
-                    //Acceleration = -Vector3.Scale(Velocity, Velocity) * D / mass + Physics.gravity;
-
                     count = 0;
-
-                    //----- THIS NEEDS TO INPUT THE NEXT "PREDICTED" POSITION INTO THE FILTER ------
-                    //Predict = transform.position + interval * Velocity + 0.5f * Acceleration * interval * interval;
-                    //Debug.Log("Filtered: " + Convert.ToString(filteredPosition.x) + ", " + Convert.ToString(filteredPosition.y) + ", " + Convert.ToString(filteredPosition.z));
-                    // Set the ball's position to the filtered world position
-                    //transform.position = filteredPosition;
-
                 }
             }
-            //Debug.Log(Convert.ToString(worldPosition.x) + " , " + Convert.ToString(worldPosition.y) + " , " + Convert.ToString(worldPosition.z) + "\n");
-            //Debug.Log(Convert.ToString(filteredPosition.x) + " , " + Convert.ToString(filteredPosition.y) + " , " + Convert.ToString(filteredPosition.z) + "\n");
         }
     }
 
@@ -263,6 +230,7 @@ public class PositionController : MonoBehaviour
         writer2.Close();
     }
 
+    // Function to read information from socket connection
     public String ReadSocket()
     {
         if (!socket_ready)
@@ -274,34 +242,34 @@ public class PositionController : MonoBehaviour
         return "";
     }
 
-    /*
+    
     private IEnumerator Prediction()
     {
         
         Vector3 position1;
         Vector3 position2;
-        
-
-        float D = 1.225f * 0.5f * 3.1415f * 0.121435f * 0.121435f / 2f;
-        float mass = 0.0837f;
+        Vector3 a;
+        Vector3 v;
+        Vector3 NextVelocity;
+        Vector3 NextPosition;
         Path.SetVertexCount(resolution);
         while (true)
         {
-            position1 = transform.position;
+            position1 = GetComponent<Rigidbody>().position;
             yield return new WaitForSeconds(interval); // wait half a second
-            position2 = transform.position;
-            Velocity = (position2 - position1) / interval;
+            position2 = GetComponent<Rigidbody>().position;
+            v = (position2 - position1) / interval;
             //Debug.Log("Velocity: " + Convert.ToString(Velocity.x) + ", " + Convert.ToString(Velocity.y) + ", " + Convert.ToString(Velocity.z));
 
             //convert position to speed
             for (int i = 0; i < resolution; i++)
             {
-                Acceleration = -Vector3.Scale(Velocity, Velocity) * D / mass + Physics.gravity;
-                NextVelocity = Velocity + Acceleration * interval;
-                NextPosition = position2 + interval * Velocity + 0.5f * Acceleration * interval * interval;
+                a = -Vector3.Scale(v, v) * D / mass + Physics.gravity;
+                NextVelocity = v + a * interval;
+                NextPosition = position2 + interval * v + 0.5f * a * interval * interval;
                 ProjectilePath[i] = NextPosition;
                 position2 = NextPosition;
-                Velocity = NextVelocity;
+                v = NextVelocity;
             }
             Path.SetPositions(ProjectilePath);
             
@@ -309,5 +277,5 @@ public class PositionController : MonoBehaviour
            //Debug.Log("Acceleration: " + Convert.ToString(Acceleration.x) + ", " + Convert.ToString(Acceleration.y) + ", " + Convert.ToString(Acceleration.z));
         }
     }
-    */
+    
 }
